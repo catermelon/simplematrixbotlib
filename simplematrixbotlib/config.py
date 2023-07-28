@@ -17,7 +17,10 @@ def _config_dict_factory(tmp) -> dict:
 
 def _extract_pattern_if_neccessary(value):
     try:
-        return value.pattern
+        if hasattr(value, '__iter__'):
+            return [x.pattern for x in value]
+        else:
+            return value.pattern
     except AttributeError:
         return value
 
