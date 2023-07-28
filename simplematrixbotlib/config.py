@@ -7,6 +7,7 @@ from nio.crypto import ENCRYPTION_ENABLED
 
 
 def _config_dict_factory(tmp) -> dict:
+    """The config as dictionary, ready to save"""
     return {
         'simplematrixbotlib': {
             'config':
@@ -16,6 +17,11 @@ def _config_dict_factory(tmp) -> dict:
     }
 
 def _extract_pattern_if_neccessary(value):
+    """Extracts the pattern of a regex if the value is a regex or a set of regex
+
+    In order to save a regex we don't want the string representation of the object but the "raw" pattern
+    (so re.compile('@test:example.com') will become @test:example.com)
+    """
     try:
         if isinstance(value, set):
             return [x.pattern for x in value]
