@@ -17,7 +17,7 @@ def _config_dict_factory(tmp) -> dict:
 
 def _extract_pattern_if_neccessary(value):
     try:
-        if hasattr(value, '__iter__'):
+        if isinstance(value, set):
             return [x.pattern for x in value]
         else:
             return value.pattern
