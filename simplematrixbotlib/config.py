@@ -23,7 +23,7 @@ def _extract_pattern_if_neccessary(value):
     (so re.compile('@test:example.com') will become @test:example.com)
     """
     try:
-        if isinstance(value, set):
+        if not isinstance(value, str):
             return [x.pattern for x in value]
         else:
             return value.pattern
