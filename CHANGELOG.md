@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.11.0
+### 2024-02-20
+* Bump minimum matrix-nio version to 0.24
+* Use matrix-nio's ReactionEvent instead of UnknownEvent for on_reaction_event listener
+
 ## v2.10.3
 ### 2023-12-15
 * Bump matrix-nio version

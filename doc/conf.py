@@ -22,7 +22,7 @@ copyright = '2023, Isaac Beverly'
 author = 'Isaac Beverly'
 
 # The full version, including alpha/beta/rc tags
-release = '2.10.3'
+release = '2.11.0'
 
 # -- General configuration ---------------------------------------------------
 
