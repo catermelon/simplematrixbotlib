@@ -1,4 +1,3 @@
-import pytest
 import pathlib
 import pytest
 import simplematrixbotlib as botlib
