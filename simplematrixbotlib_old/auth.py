@@ -28,7 +28,7 @@ class Creds:
                  access_token=None,
                  session_stored_file='session.txt'):
         """
-        Initializes the simplematrixbotlib.Creds class.
+        Initializes the simplematrixbotlib_old.Creds class.
 
         Parameters
         ----------

@@ -11,7 +11,7 @@ echo_reaction_bot
       Reaction: 👍️
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://example.com", "echo_reaction_bot", "password")
 bot = botlib.Bot(creds)

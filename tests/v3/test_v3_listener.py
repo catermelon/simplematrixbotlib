@@ -1,4 +1,4 @@
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 from nio import Event
 
 def test_listener():

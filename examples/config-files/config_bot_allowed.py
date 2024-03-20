@@ -15,7 +15,7 @@ user1
       !echo something
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "user", "pass")
 

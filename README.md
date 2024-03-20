@@ -1,5 +1,5 @@
 # Simple-Matrix-Bot-Lib
-(Version 2.7.0)
+(Version 3.0.0)
 
 Simple-Matrix-Bot-Lib is a Python bot library for the Matrix ecosystem built on [matrix-nio](https://github.com/poljar/matrix-nio).
 
@@ -45,21 +45,22 @@ git clone --branch master https://codeberg.org/imbev/simplematrixbotlib.git
 # randomuser - "!echo example string"
 # echo_bot - "example string"
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "echo_bot", "pass")
 bot = botlib.Bot(creds)
 PREFIX = '!'
+
 
 @bot.listener.on_message_event
 async def echo(room, message):
     match = botlib.MessageMatch(room, message, bot, PREFIX)
 
     if match.is_not_from_this_bot() and match.prefix() and match.command("echo"):
-
         await bot.api.send_text_message(
             room.room_id, " ".join(arg for arg in match.args())
-            )
+        )
+
 
 bot.run()
 ```

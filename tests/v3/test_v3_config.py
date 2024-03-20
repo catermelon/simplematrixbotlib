@@ -1,5 +1,5 @@
 def test_config_dict():
-    import simplematrixbotlib as botlib
+    import simplematrixbotlib_old as botlib
 
     config = botlib.Config(defaults={'creds':'foo'}).from_dict({
            'prefix':'!'
@@ -27,7 +27,7 @@ def test_config_dict():
 
 def test_config_env_vars():
     import os
-    import simplematrixbotlib as botlib
+    import simplematrixbotlib_old as botlib
 
     os.environ["BOT_CREDS"] = "bar"
     os.environ["BOT_PREFIX"] = "!"

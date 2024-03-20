@@ -104,7 +104,7 @@ Then add your new custom field by adding an attribute to your class, and make su
 When creating a simple attribute like that, its name may not start with an underscore `_` in order to make it save and load properly.
 
 ```python
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 from dataclasses import dataclass
 
 
@@ -126,7 +126,7 @@ If you wanted, you could add additional methods, e.g. to implement behavior like
 Take a look at the Config class source code if you are unsure how to do this.
 
 ```python
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 from dataclasses import dataclass
 
 

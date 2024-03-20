@@ -1,5 +1,5 @@
 def test_parser():
-    import simplematrixbotlib as botlib
+    import simplematrixbotlib_old as botlib
 
     message = "echo foo something bar something spam eggs"
     rule = "echo <arg1> something <arg2> something <*>"

@@ -20,7 +20,7 @@ echo_bot
       The bot has been high-fived 11 times!
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://example.org", "hight_five_bot", "secretpassword")
 bot = botlib.Bot(creds)

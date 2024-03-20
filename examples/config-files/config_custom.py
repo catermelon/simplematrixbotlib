@@ -8,7 +8,7 @@ echo_bot
       something
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 from dataclasses import dataclass
 
 

@@ -17,7 +17,7 @@ from nio.exceptions import OlmUnverifiedDeviceError
 from nio.responses import UploadResponse
 
 if typing.TYPE_CHECKING:
-    from simplematrixbotlib import Config
+    from simplematrixbotlib_old import Config
 
 
 async def check_valid_homeserver(homeserver: str) -> bool:
@@ -152,7 +152,7 @@ class LegacyApi:
 
     def __init__(self, creds, config):
         """
-        Initializes the simplematrixbotlib.Api class.
+        Initializes the simplematrixbotlib_old.Api class.
 
         Parameters
         ----------

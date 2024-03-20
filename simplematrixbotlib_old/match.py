@@ -2,7 +2,7 @@ from typing import Dict
 
 from nio import RoomMessageText
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 
 def match(event: RoomMessageText, rule: str) -> Dict[str, str]:
@@ -19,7 +19,7 @@ class Match:
 
     def __init__(self, room, event, bot) -> None:
         """
-        Initializes the simplematrixbotlib.Match class.
+        Initializes the simplematrixbotlib_old.Match class.
 
         ...
 
@@ -32,7 +32,7 @@ class Match:
             The bot developer will use the event parameter of the handler function for this.
         
         bot : simplematrixbotlib.Bot
-            The bot developer will use the bot's instance of the simplematrixbotlib.Bot class for this.
+            The bot developer will use the bot's instance of the simplematrixbotlib_old.Bot class for this.
 
         """
         self.room = room
@@ -99,7 +99,7 @@ class MessageMatch(Match):
 
     def __init__(self, room, event, bot, prefix="") -> None:
         """
-        Initializes the simplematrixbotlib.MessageMatch class.
+        Initializes the simplematrixbotlib_old.MessageMatch class.
 
         ...
 
@@ -112,7 +112,7 @@ class MessageMatch(Match):
             The bot developer will use the event parameter of the handler function for this.
         
         bot : simplematrixbotlib.Bot
-            The bot developer will use the bot's instance of the simplematrixbotlib.Bot class for this.
+            The bot developer will use the bot's instance of the simplematrixbotlib_old.Bot class for this.
 
         prefix : str, Optional
             The bot developer will specify a prefix, the prefix is the beginning of messages that are intended to be commands, usually "!", "/" or similar.

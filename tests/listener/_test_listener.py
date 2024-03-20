@@ -1,5 +1,5 @@
 from typing import List
-from simplematrixbotlib.listener import Listener
+from simplematrixbotlib_old.listener import Listener
 from unittest import mock
 from nio import RoomMessageText
 

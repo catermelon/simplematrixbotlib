@@ -1,56 +1,44 @@
-[tool.poetry]
+[project]
 name = "simplematrixbotlib"
-version = "2.7.0"
-description = "An easy to use bot library for the Matrix ecosystem written in Python."
-authors = ["krazykirby99999 <krazykirby99999@gmail.com>"]
-license = "MIT"
+version = "3.0.0-dev"
+maintainers = [
+  {name = "Isaac Beverly", email = "imbev@protonmail.com"},
+]
+description = "A simple Python bot library for the Matrix Protocol"
 readme = "README.md"
-repository = "https://github.com/KrazyKirby99999/simple-matrix-bot-lib"
-documentation = "https://simplematrixbotlib.readthedocs.io"
+license = {file = "LICENSE"}
 keywords = [
-    "simple",
     "matrix",
     "bot",
-    "lib",
-    "simple-matrix-bot-lib"
+    "library",
+    "simplematrixbotlib",
+    "simple-matrix-bot-lib",
 ]
 classifiers = [
+    "Topic :: Communications :: Chat :: Matrix",
+    "Topic :: Internet",
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
-    "Topic :: Communications :: Chat",
-    "Topic :: Internet"
+    "Intended Audience :: Developers",
+]
+dependencies = [
+  "matrix-nio",
+  "pillow",
+  "markdown",
 ]
 
-[tool.poetry.urls]
-"Matrix Room" = "https://matrix.to/#/#simplematrixbotlib:matrix.org"
+[project.optional-dependencies]
+docs = [
+    "pdoc"
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-matrix-nio = "0.19"
-python-cryptography-fernet-wrapper = ">=1.0.4"
-pillow = ">=8.2"
-markdown = ">=3.3"
-toml = "^0.10.2"
-sly = "^0.4"
-python-dotenv = "^1.0.0"
-
-[tool.poetry.dev-dependencies]
-wheel = "^0.37.0"
-twine = "^3.4.2"
-pytest = "^6.2.5"
-bandit = "^1.7.1"
-mypy = "^0.930"
-types-Markdown = "^3.3.9"
-types-aiofiles = "^0.7.0"
-types-toml = "^0.10.1"
-yapf = "^0.32.0"
-pytest-github-actions-annotate-failures = "^0.1.6"
-
-[tool.poetry.group.dev.dependencies]
-mkdocs = "^1.4.0"
-mkdocs-codeinclude-plugin = "^0.2.0"
-Jinja2 = "3.0.0"
+[project.urls]
+Documentation = "https://simplematrixbotlib.readthedocs.io"
+Repository = "https://codeberg.org/imbev/simplematrixbotlib"
+Issues = "https://codeberg.org/imbev/simplematrixbotlib/issues"
+Chat = "https://matrix.to/#/#simplematrixbotlib:matrix.org"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"

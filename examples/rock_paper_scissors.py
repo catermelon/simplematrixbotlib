@@ -1,4 +1,4 @@
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 import os
 import random
 

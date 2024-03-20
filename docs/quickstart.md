@@ -33,8 +33,9 @@ password: secretpassword
 (The example source code will be provided in full at the bottom)
 
 Begin by importing the package.
+
 ```python
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 ```
 Create a Creds object with your login credentials.
 ```python
@@ -81,22 +82,24 @@ bot.run()
 This bot is an echo bot, which "echoes" the arguments of any message that starts with "!echo"(<PREFIX><COMMAND>). As many handlers as needed can be added, each with its own handler function and a listener.
 
 Full code of echo bot example
+
 ```python
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "user", "pass")
 bot = botlib.Bot(creds)
 PREFIX = '!'
 
+
 @bot.listener.on_message_event
 async def echo(room, message):
-    match = botlib.MessageMatch(room, message, bot, PREFIX) 
+    match = botlib.MessageMatch(room, message, bot, PREFIX)
 
     if match.is_not_from_this_bot() and match.prefix() and match.command("echo"):
-
         await bot.api.send_text_message(
             room.room_id, " ".join(arg for arg in match.args())
-            ) 
+        )
+
 
 bot.run()
 ```

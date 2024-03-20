@@ -11,7 +11,7 @@ echo_bot
       something
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 config = botlib.Config()
 # config.encryption_enabled = True  # Automatically enabled by installing encryption support

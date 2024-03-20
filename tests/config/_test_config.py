@@ -1,7 +1,7 @@
 import pytest
 import pathlib
 import pytest
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 import os.path
 import re
 from dataclasses import dataclass
@@ -101,7 +101,7 @@ def test_write_toml():
     config.save_toml(tmp_file)
 
     default_values = (
-        "[simplematrixbotlib.config]\n"
+        "[simplematrixbotlib_old.config]\n"
         "join_on_invite = true\n"
         f"encryption_enabled = {'true' if ENCRYPTION_ENABLED else 'false'}\n"
         "emoji_verify = false\n"

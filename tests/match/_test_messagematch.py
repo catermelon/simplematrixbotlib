@@ -1,4 +1,4 @@
-from simplematrixbotlib.match import MessageMatch, Match
+from simplematrixbotlib_old.match import MessageMatch, Match
 from unittest import mock
 
 mock_room = mock.MagicMock()

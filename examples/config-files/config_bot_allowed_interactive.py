@@ -21,7 +21,7 @@ admin2
       !disallow @user1:example\.org
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "user", "pass")
 

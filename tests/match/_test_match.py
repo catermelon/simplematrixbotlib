@@ -1,5 +1,5 @@
-from simplematrixbotlib.match import Match
-from simplematrixbotlib.config import Config
+from simplematrixbotlib_old.match import Match
+from simplematrixbotlib_old.config import Config
 from unittest import mock
 import pathlib, os.path
 

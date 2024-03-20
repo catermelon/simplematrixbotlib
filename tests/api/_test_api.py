@@ -1,5 +1,5 @@
 import pytest
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 
 def test_check_valid_homeserver():

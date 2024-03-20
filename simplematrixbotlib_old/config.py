@@ -10,7 +10,7 @@ from nio.crypto import ENCRYPTION_ENABLED
 
 def _config_dict_factory(tmp) -> dict:
     return {
-        'simplematrixbotlib': {
+        'simplematrixbotlib_old': {
             'config':
                 {_strip_leading_underscore(name): value
                  for name, value in tmp}
@@ -87,7 +87,7 @@ class LegacyConfig:
 
     def load_toml(self, file_path: str) -> None:
         with open(file_path, 'r') as file:
-            config_dict: dict = toml.load(file)['simplematrixbotlib']['config']
+            config_dict: dict = toml.load(file)['simplematrixbotlib_old']['config']
             self._load_config_dict(config_dict)
 
     def save_toml(self, file_path: str) -> None:

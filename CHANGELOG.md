@@ -72,6 +72,7 @@ Fixes a bug.
 ### 2022-01-07 46a7be43
 ### Notes:
 Example usage is shown below:
+
 ```python
 """
 Example Usage:
@@ -86,7 +87,7 @@ echo_reaction_bot
       Reaction: 👍️
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://example.com", "echo_reaction_bot", "password")
 bot = botlib.Bot(creds)
@@ -138,19 +139,22 @@ Version 2.5.0 adds improvements to the config feature. A thank you to HarHarLink
 ### 2021-12-03 e5d6cbd7
 ### Notes:
 Example usage is shown below:
+
 ```python
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "user", "pass")
 bot = botlib.Bot(creds)
 PREFIX = '!'
 
+
 @bot.listener.on_message_event
 async def echo(room, message):
     match = botlib.MessageMatch(room, message, bot, PREFIX)
-    if match.is_not_from_this_bot() and match.prefix() and match.command( "echo"):
+    if match.is_not_from_this_bot() and match.prefix() and match.command("echo"):
         response = " ".join(arg for arg in match.args())
         await bot.api.send_text_message(room.room_id, response)
+
 
 bot.run()
 ```
@@ -169,8 +173,9 @@ A thank you to HarHarLinks for their contributions to version 2.4.1!
 ### Notes:
 Version 2.4.0 provides several new features and a fix. A thank you to HarHarLinks for their contributions to version 2.4.0!
 Example usage is shown below:
+
 ```python
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "user", "pass")
 bot = botlib.Bot(creds)
@@ -183,9 +188,10 @@ async def echo(room, message):
 
     if match.is_not_from_this_bot() and match.prefix() and match.command(
             "echo"):
-            
         response = " ".join(arg for arg in match.args())
-        await bot.api.send_text_message(room.room_id, response, "m.notice") ## Uses the msgtype of m.notice instead of m.text
+        await bot.api.send_text_message(room.room_id, response,
+                                        "m.notice")  ## Uses the msgtype of m.notice instead of m.text
+
 
 bot.run()
 ```
@@ -203,6 +209,7 @@ bot.run()
 ### Notes:
 Version 2.3.0 adds support for additional configuration via config files and other methods. Currently, there is only one setting that can be changed, however many existing and future features will be able to be enabled or disabled via this config.
 Example usage is shown below:
+
 ```python
 """
 random_user
@@ -211,7 +218,7 @@ echo_bot
      something
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "user", "pass")
 
@@ -221,13 +228,15 @@ config.load_toml("config.toml")
 bot = botlib.Bot(creds, config)
 PREFIX = '!'
 
+
 @bot.listener.on_message_event
 async def echo(room, message):
-     match = botlib.MessageMatch(room, message, bot, PREFIX)
+    match = botlib.MessageMatch(room, message, bot, PREFIX)
 
-     if match.is_not_from_this_bot() and match.prefix() and match.command("echo"):
-          await bot.api.send_text_message(room.room_id,
-                                " ".join(arg for arg in match.args()))
+    if match.is_not_from_this_bot() and match.prefix() and match.command("echo"):
+        await bot.api.send_text_message(room.room_id,
+                                        " ".join(arg for arg in match.args()))
+
 
 bot.run()
 ```
@@ -248,6 +257,7 @@ join_on_invite = false
 ### 2021-11-08 96b120e9
 In addition to username/access_token, it is possible to authenticate using username/password and login(SSO) token.
 Example usage is shown below:
+
 ```python
 """
 Example Usage:
@@ -259,13 +269,13 @@ echo_bot
       something
 """
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds(
     homeserver="https://example.org",
     username="echo_bot",
     access_token="syt_c2...DTJ",
-    )
+)
 bot = botlib.Bot(creds)
 PREFIX = '!'
 
@@ -276,7 +286,6 @@ async def echo(room, message):
 
     if match.is_not_from_this_bot() and match.prefix() and match.command(
             "echo"):
-
         await bot.api.send_text_message(room.room_id,
                                         " ".join(arg for arg in match.args()))
 
@@ -295,27 +304,28 @@ bot.run()
 ### 2021-08-27 29b70539
 ### Notes:
 Example usage is shown below:
+
 ```python
 #### Respond to all messages from users with a hello world message that involves markdown formatting
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "user", "pass")
 
 bot = botlib.Bot(creds)
 
-@bot.on_message_event
 
+@bot.on_message_event
 async def hello_world_md(room, message):
     match = botlib.MessageMatch(room, message, bot)
 
-    markdown_message = "# Hello World from [simplematrixbotlib](https://github.com/i10b/simplematrixbotlib)!"
+    markdown_message = "# Hello World from [simplematrixbotlib_old](https://github.com/i10b/simplematrixbotlib)!"
     if match.is_not_from_this_bot():
-
         await bot.api.send_markdown_message(
             room_id=room.room_id,
 
             message=markdown_message)
+
 
 bot.run()
 ```
@@ -332,6 +342,7 @@ bot.run()
 ### Notes:
 The second major version of the simplematrixbotlib package has been released.
 Example usage is shown below:
+
 ```python
 #### echo.py
 #### Example:
@@ -339,24 +350,24 @@ Example usage is shown below:
 #### randomuser - "!echo example string"
 #### echo_bot - "example string"
 
-import simplematrixbotlib as botlib
+import simplematrixbotlib_old as botlib
 
 creds = botlib.Creds("https://home.server", "echo_bot", "pass")
 
 bot = botlib.Bot(creds)
 PREFIX = '!'
 
-@bot.listener.on_message_event
 
+@bot.listener.on_message_event
 async def echo(room, message):
     match = botlib.MessageMatch(room, message, bot, PREFIX)
 
     if match.is_not_from_this_bot() and match.prefix() and match.command("echo"):
-
         await bot.api.send_text_message(
 
             room.room_id, " ".join(arg for arg in match.args())
-            )
+        )
+
 
 bot.run()
 ```
