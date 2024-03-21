@@ -6,4 +6,3 @@ from .message import Message
 from .middleware import prefix
 from .room import Room
 from .run import run
-from .user import User
