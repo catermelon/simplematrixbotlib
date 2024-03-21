@@ -4,7 +4,7 @@ import json
 import os
 from asyncio import get_event_loop
 from logging import getLogger
-from typing import Union
+from typing import Optional
 
 from nio import AsyncClient, LoginError, SyncError
 
@@ -23,7 +23,7 @@ def format_homeserver_url(homeserver: str) -> str:
         return "https://" + homeserver
 
 
-def get_stored_access_token() -> Union[None, str]:
+def get_stored_access_token() -> Optional[str]:
     os.makedirs(DATA_PATH, exist_ok=True)
     if os.path.exists(creds_path):
         with open(creds_path, "r") as f:
@@ -63,7 +63,7 @@ class Creds:
         self.user = user
         self.access_token = access_token
 
-    async def get_valid_client(self) -> Union[None, AsyncClient]:
+    async def get_valid_client(self) -> Optional[AsyncClient]:
         client = AsyncClient(homeserver=self.homeserver, user=self.user, store_path=f"{DATA_PATH}/store")
         client.access_token = self.access_token
         resp = await client.sync(timeout=10)
@@ -86,7 +86,7 @@ class Creds:
         access_token = get_stored_access_token()
         if access_token:
             creds = cls(homeserver, username, access_token)
-            client: Union[None, AsyncClient] = get_event_loop().run_until_complete(
+            client: Optional[AsyncClient] = get_event_loop().run_until_complete(
                 creds.get_valid_client()
             )
             if client:

@@ -1,4 +1,4 @@
-from typing import Iterable, Union, get_type_hints
+from typing import Iterable, get_type_hints, Optional
 from logging import getLogger
 
 from nio import AsyncClient, RoomMessageText
@@ -34,7 +34,7 @@ def bot_wrapper(handler: Handler):
 
 
 def setup_callbacks(
-        client: AsyncClient, handlers: Iterable[Handler], prefix: Union[None, str] = None
+        client: AsyncClient, handlers: Iterable[Handler], prefix: Optional[str] = None
 ) -> None:
     logger.debug(f"Setting up callbacks for handlers: {handlers}")
     room_message_text_callbacks = []
