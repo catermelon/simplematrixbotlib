@@ -26,7 +26,8 @@ class Creds:
                  password=None,
                  login_token=None,
                  access_token=None,
-                 session_stored_file='session.txt'):
+                 session_stored_file='session.txt',
+                 device_name="Bot Client using Simple-Matrix-Bot-Lib"):
         """
         Initializes the simplematrixbotlib.Creds class.
 
@@ -50,6 +51,8 @@ class Creds:
         session_stored_file : str, optional
             Location for the bot to read and write device_id and access_token. The data within this file is encrypted and decrypted with the password parameter using the cryptography package. If set to None, session data will not be saved to file.
 
+        device_name : str, optional
+            Name display in the list of sessions. Useful to identified the device.
         """
 
         self.homeserver = homeserver
@@ -58,7 +61,7 @@ class Creds:
         self.login_token = login_token
         self.access_token = access_token
         self._session_stored_file = session_stored_file
-        self.device_name = "Bot Client using Simple-Matrix-Bot-Lib"
+        self.device_name = device_name
         self.device_id = ""
 
         if self.password:
