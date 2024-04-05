@@ -360,11 +360,13 @@ class Api:
 
         file_stat = await aiofiles.os.stat(image_filepath)
         async with aiofiles.open(image_filepath, "r+b") as file:
-            resp, maybe_keys = await self.async_client.upload(
+            resp, decryption_keys = await self.async_client.upload(
                 file,
                 content_type=mime_type,
                 filename=os.path.basename(image_filepath),
-                filesize=file_stat.st_size)
+                filesize=file_stat.st_size,
+                encrypt=True
+            )
         if isinstance(resp, UploadResponse):
             pass  # Successful upload
         else:
@@ -379,6 +381,13 @@ class Api:
                 "w": width,
                 "h": height,
                 "thumbnail_url": None
+            },
+            "file": {
+                "url": resp.content_uri,
+                "key": decryption_keys["key"],
+                "iv": decryption_keys["iv"],
+                "hashes": decryption_keys["hashes"],
+                "v": decryption_keys["v"],
             },
             "msgtype": "m.image",
             "url": resp.content_uri
