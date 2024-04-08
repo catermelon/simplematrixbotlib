@@ -365,7 +365,7 @@ class Api:
                 content_type=mime_type,
                 filename=os.path.basename(image_filepath),
                 filesize=file_stat.st_size,
-                encrypt=True
+                encrypt=self.config.encryption_enabled
             )
         if isinstance(resp, UploadResponse):
             pass  # Successful upload
@@ -382,16 +382,18 @@ class Api:
                 "h": height,
                 "thumbnail_url": None
             },
-            "file": {
+            "msgtype": "m.image",
+            "url": resp.content_uri
+        }
+
+        if self.config.encryption_enabled:
+            content["file"] = {
                 "url": resp.content_uri,
                 "key": decryption_keys["key"],
                 "iv": decryption_keys["iv"],
                 "hashes": decryption_keys["hashes"],
                 "v": decryption_keys["v"],
-            },
-            "msgtype": "m.image",
-            "url": resp.content_uri
-        }
+            }
 
         try:
             await self._send_room(room_id=room_id, content=content)
