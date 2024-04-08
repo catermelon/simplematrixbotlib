@@ -382,16 +382,18 @@ class Api:
                 "h": height,
                 "thumbnail_url": None
             },
-            "file": {
+            "msgtype": "m.image",
+            "url": resp.content_uri
+        }
+
+        if self.config.encryption_enabled:
+            content["file"] = {
                 "url": resp.content_uri,
                 "key": decryption_keys["key"],
                 "iv": decryption_keys["iv"],
                 "hashes": decryption_keys["hashes"],
                 "v": decryption_keys["v"],
-            },
-            "msgtype": "m.image",
-            "url": resp.content_uri
-        }
+            }
 
         if self.config.encryption_enabled:
             content["file"] = {
