@@ -23,13 +23,15 @@ class Bot:
     
     """
 
-    def __init__(self, creds: Creds, config: Optional[Config] = None):
+    def __init__(self, creds, config=None):
         """
         Initializes the simplematrixbotlib.Bot class.
 
         Parameters
         ----------
         creds : simplematrixbotlib.Creds
+        config : simplematrixbotlib.Config
+        decrypt_failure_msg : Boolean
 
         """
 
@@ -89,7 +91,7 @@ class Bot:
             for room_id in self.async_client.rooms:
                 await action(room_id)
 
-        await self.async_client.sync_forever(timeout=3000, full_state=True)
+        await self.async_client.sync_forever(timeout=3000, full_state=True, set_presence=self.config._set_presence)
 
     def run(self) -> None:
         """
