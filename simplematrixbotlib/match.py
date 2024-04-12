@@ -1,3 +1,6 @@
+import re
+
+
 class Match:
     """
     Class with methods to filter events
@@ -110,6 +113,23 @@ class MessageMatch(Match):
         super().__init__(room, event, bot)
         self._prefix = prefix
 
+    def format_body(self):
+        """
+
+        Returns
+        -------
+        boolean
+            Returns False if there's no formatted body in the event.
+        
+        str
+            Returns the string after removing html balise used for a reply.
+        """
+                
+        if self.event.formatted_body:
+            if "<mx-reply>" in self.event.formatted_body:
+                return re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)[1:]
+        return False
+
     def command(self, command=None, case_sensitive=True):
         """
         Parameters
@@ -136,6 +156,10 @@ class MessageMatch(Match):
 
         if not body_without_prefix:
             return []
+        
+        loc = self.format_body()
+        if loc:
+            body_without_prefix = loc
 
         if command:
             return (body_without_prefix.split()[0] == command
@@ -153,6 +177,11 @@ class MessageMatch(Match):
             Returns True if the message begins with the prefix, and False otherwise. If there is no prefix specified during the creation of this MessageMatch object, then return True.
         """
 
+        if self.event.formatted_body:
+            if "<mx-reply>" in self.event.formatted_body:
+                body_without_balise = re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)
+                return body_without_balise.startswith(self._prefix)
+
         return self.event.body.startswith(self._prefix)
 
     def args(self):
@@ -163,6 +192,10 @@ class MessageMatch(Match):
         list
             Returns a list of strings that are the "words" of the message, except for the first "word", which would be the command.
         """
+            
+        loc = self.format_body()
+        if loc:
+            return loc.split()[1:]
 
         return self.event.body.split()[1:]
 
@@ -174,5 +207,9 @@ class MessageMatch(Match):
         boolean
             Returns True if the string argument is found within the body of the message.
         """
+
+        loc = self.format_body()
+        if loc:
+            return string in loc
 
         return string in self.event.body
