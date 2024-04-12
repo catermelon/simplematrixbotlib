@@ -1,6 +1,9 @@
 import re
 
 
+import re
+
+
 class Match:
     """
     Class with methods to filter events
