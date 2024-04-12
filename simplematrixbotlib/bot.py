@@ -23,7 +23,7 @@ class Bot:
     
     """
 
-    def __init__(self, creds, config=None):
+    def __init__(self, creds, config=None, decrypt_failure_msg=True):
         """
         Initializes the simplematrixbotlib.Bot class.
 
@@ -46,6 +46,7 @@ class Bot:
         self.listener = botlib.Listener(self)
         self.async_client: AsyncClient = None
         self.callbacks: botlib.Callbacks = None
+        self.decrypt_failure_msg = decrypt_failure_msg
 
     async def main(self) -> None:
         try:
