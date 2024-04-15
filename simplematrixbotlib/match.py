@@ -113,22 +113,19 @@ class MessageMatch(Match):
         super().__init__(room, event, bot)
         self._prefix = prefix
 
-    def format_body(self):
+    def formatted_body(self):
         """
 
         Returns
         -------
-        boolean
-            Returns False if there's no formatted body in the event.
-        
-        str
+        str, Optional
             Returns the string after removing html balise used for a reply.
         """
                 
         if self.event.formatted_body:
             if "<mx-reply>" in self.event.formatted_body:
                 return re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)[1:]
-        return False
+        return None
 
     def command(self, command=None, case_sensitive=True):
         """
@@ -157,7 +154,7 @@ class MessageMatch(Match):
         if not body_without_prefix:
             return []
         
-        loc = self.format_body()
+        loc = self.formatted_body()
         if loc:
             body_without_prefix = loc
 
@@ -193,7 +190,7 @@ class MessageMatch(Match):
             Returns a list of strings that are the "words" of the message, except for the first "word", which would be the command.
         """
             
-        loc = self.format_body()
+        loc = self.formatted_body()
         if loc:
             return loc.split()[1:]
 
@@ -208,7 +205,7 @@ class MessageMatch(Match):
             Returns True if the string argument is found within the body of the message.
         """
 
-        loc = self.format_body()
+        loc = self.formatted_body()
         if loc:
             return string in loc
 
