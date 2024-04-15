@@ -86,7 +86,7 @@ class Callbacks:
             "If this error persists despite verification, reset the crypto session by deleting "
             f"{self.bot.config.store_path} and {self.bot.creds._session_stored_file}. "
             "You will have to verify any verified devices anew.\n")
-        if self.bot.decrypt_failure_msg:
+        if self.bot.config._decrypt_failure_msg:
             await self.bot.api.send_text_message(
                 room.room_id, "Failed to decrypt your message. "
                 "Make sure encryption is enabled in my config and "

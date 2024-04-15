@@ -57,6 +57,8 @@ class Config:
     _allowlist: Set[re.Pattern] = field(
         default_factory=set)  # TODO: default to bot's homeserver
     _blocklist: Set[re.Pattern] = field(default_factory=set)
+    _decrypt_failure_msg = True
+    _set_presence="online"
 
     def _load_config_dict(self, config_dict: dict) -> None:
         # TODO: make this into a factory, so defaults for

@@ -43,7 +43,6 @@ class Bot:
         self.listener = botlib.Listener(self)
         self.async_client: AsyncClient = None
         self.callbacks: botlib.Callbacks = None
-        self.decrypt_failure_msg = decrypt_failure_msg
 
     async def main(self):
         try:
@@ -89,7 +88,7 @@ class Bot:
             for room_id in self.async_client.rooms:
                 await action(room_id)
 
-        await self.async_client.sync_forever(timeout=3000, full_state=True, set_presence="online")
+        await self.async_client.sync_forever(timeout=3000, full_state=True, set_presence=self.config._set_presence)
 
     def run(self):
         """
