@@ -24,8 +24,7 @@ class Handler:
 
     def __init__(self,
                  handler: Union[Handler, Callable],
-                 listener: Optional[Callable] = None,
-                 middleware: Optional[Callable] = None) -> None:
+                 listener: Optional[Callable] = None) -> None:
 
         if isinstance(handler, Handler):
             self.nio_callback = handler.nio_callback
@@ -33,7 +32,6 @@ class Handler:
             self.callable_args = handler.callable_args
             self.original_callable_args = handler.original_callable_args
             self.listeners = handler.listeners
-            self.middleware = handler.middleware
             self.prefix = None
         else:
             self.nio_callback = None
@@ -41,13 +39,9 @@ class Handler:
             self.callable_args = {}
             self.original_callable_args = {}
             self.listeners = []
-            self.middleware = []
 
         if listener is not None:
             self.listeners.append(listener)
-
-        if middleware is not None:
-            self.middleware.append(middleware)
 
     def eval_callback_args(self,
                            client: Optional[AsyncClient] = None,
