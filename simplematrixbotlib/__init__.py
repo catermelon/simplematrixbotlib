@@ -1,6 +1,7 @@
 from .bot import Bot
 from .creds import Creds
 from .defaults import DATA_PATH
+from .deps import Deps
 from .listeners import on_text
 from .message import Message
 from .room import Room

@@ -4,6 +4,7 @@ from typing import Awaitable, Callable, Optional, Union
 
 from nio import Event, MatrixRoom, AsyncClient
 
+from .deps import Deps
 from .eval_me import EvalMe
 # noinspection PyUnresolvedReferences
 from .bot import Bot
@@ -19,7 +20,6 @@ class Handler:
     callable_args: dict
     original_callable_args: dict
     listeners: list[Callable]
-    prefix: Optional[str]
     client: Optional[AsyncClient]
 
     def __init__(self,
@@ -32,7 +32,7 @@ class Handler:
             self.callable_args = handler.callable_args
             self.original_callable_args = handler.original_callable_args
             self.listeners = handler.listeners
-            self.prefix = None
+            self.deps = None
         else:
             self.nio_callback = None
             self.callable = handler
@@ -45,23 +45,21 @@ class Handler:
 
     def eval_callback_args(self,
                            client: Optional[AsyncClient] = None,
-                           prefix: Optional[str] = None):
+                           deps: Optional[Deps] = None):
         if client is not None:
             self.client = client
         else:
             # noinspection PyUnusedLocal
             client = self.client
 
-        if prefix is not None:
-            self.prefix = prefix
-        else:
-            # noinspection PyUnusedLocal
-            prefix = self.prefix
+        self.callable_args["deps"] = deps
 
         async def callback(room: MatrixRoom, event: Event) -> None:
             for param, arg in self.original_callable_args.items():
                 if isinstance(arg, EvalMe):
                     self.callable_args[param] = eval(arg.to_eval)
+                if isinstance(arg, Deps):
+                    self.callable_args[param] = self.deps
             await self.callable(**self.callable_args)
 
         self.nio_callback = callback

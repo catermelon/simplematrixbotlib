@@ -4,6 +4,7 @@ from logging import getLogger
 from nio import AsyncClient, RoomMessageText
 
 from .bot import Bot
+from .deps import Deps
 from .eval_me import EvalMe
 from .handler import Handler
 from .message import Message
@@ -30,11 +31,11 @@ def bot_wrapper(handler: Handler):
     logger.debug(f"Wrapping {handler.callable} for Bot")
     for param, param_class in get_type_hints(handler.callable).items():
         if param_class is Bot:
-            handler.original_callable_args[param] = EvalMe("Bot(self.client, self.prefix)")
+            handler.original_callable_args[param] = EvalMe("Bot(self.client)")
 
 
 def setup_callbacks(
-        client: AsyncClient, handlers: Iterable[Handler], prefix: Optional[str] = None
+        client: AsyncClient, handlers: Iterable[Handler], deps: Optional[Deps]
 ) -> None:
     logger.debug(f"Setting up callbacks for handlers: {handlers}")
     room_message_text_callbacks = []
@@ -45,7 +46,7 @@ def setup_callbacks(
                 case on_text:
                     message_wrapper(handler)
                     room_wrapper(handler)
-        handler.eval_callback_args(client=client, prefix=prefix)
+        handler.eval_callback_args(client=client, deps=deps)
         for listener in handler.listeners:
             match listener:
                 case on_text:
