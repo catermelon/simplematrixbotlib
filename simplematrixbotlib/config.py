@@ -46,6 +46,7 @@ class Config:
     Can be inherited from by bot developers to implement custom settings.
     """
 
+    send_decryption_error_message_in_room = True
     _timeout: int = 65536
     _join_on_invite: bool = True
     _encryption_enabled: bool = ENCRYPTION_ENABLED
