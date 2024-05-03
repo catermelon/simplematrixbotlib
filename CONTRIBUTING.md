@@ -1,4 +1,4 @@
-# How can I contribute?
+## How can I contribute?
 
 Thank you for taking your time to view and possibly contribute to simplematrixbotlib!
 
@@ -14,10 +14,8 @@ To suggest a feature for simplematrixbotlib, select the feature request template
 
 If you want to contribute to simplematrixbotlib, the most direct method is to improve the source code. 
 
-# How do I improve the Source Code?
-
-This project follows the Github Flow workflow. You may find the information located [here](https://guides.github.com/introduction/flow/) to be useful.
-
-### Ask First
-
-Before you begin, please discuss your planned improvements with a maintainer in our [Matrix Room](https://matrix.to/#/#simplematrixbotlib:matrix.org). This is to make sure that your changes are aligned with the goals of this project, which can help you avoid wasting your time and effort.
+- Discuss your planned improvements with a maintainer in our [Matrix Room](https://matrix.to/#/#simplematrixbotlib:matrix.org) to ensure that they are aligned with the goals of this project.
+- Fork the repository, and create a new branch for your issue (e.g. 60/decryption-error).
+- Make your changes. Each distinct change should be in a separate commit with a descriptive commit message written in [imperative mood](https://en.wikipedia.org/wiki/Imperative_mood).
+- Make a pull request and receive feedback. Make changes in response to feedback.
+- Before a maintainer merges the pull request, the branch should have no conflicts with the master branch. Merge the master branch into the branch and ensure that the updates are not disruptive.
