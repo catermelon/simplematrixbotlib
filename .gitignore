@@ -12,3 +12,4 @@ dist/
 /.idea/
 /bot_data/
 /requirements.txt
+/requirements-dev.txt
