@@ -1,3 +1,12 @@
+"""
+.. include:: ../README.md
+.. include:: ../SECURITY.md
+.. include:: ../CONTRIBUTING.md
+.. include:: ../CONDUCT.md
+"""
+
+__version__ = "3.0.0-dev"
+
 from .bot import Bot
 from .creds import Creds
 from .defaults import DATA_PATH

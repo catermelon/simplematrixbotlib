@@ -1,3 +1,5 @@
+"""@private"""
+
 class EvalMe:
     def __init__(self, to_eval: str):
         self.to_eval = to_eval

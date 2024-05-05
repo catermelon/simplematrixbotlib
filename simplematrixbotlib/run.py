@@ -11,6 +11,7 @@ from .handler import Handler
 logger = logging.getLogger(__name__)
 """@private"""
 
+
 async def run_coroutine(creds: Creds, handlers: Iterable[Handler], deps: Optional[Deps] = None):
     client = await creds.get_valid_client()
 

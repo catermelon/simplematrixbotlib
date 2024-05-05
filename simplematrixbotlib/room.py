@@ -5,6 +5,7 @@ from nio import MatrixRoom, AsyncClient
 
 class Room:
     def __init__(self, room: MatrixRoom, client: AsyncClient) -> None:
+        """@private"""
         self.room_id = room.room_id
         self.name = room.name
         self.summary = room.summary

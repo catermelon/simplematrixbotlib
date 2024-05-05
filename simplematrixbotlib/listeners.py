@@ -1,3 +1,5 @@
+"""@private"""
+
 from types import MappingProxyType
 from typing import Union, Callable
 

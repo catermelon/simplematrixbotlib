@@ -3,6 +3,7 @@ from typing import Dict, Any, Optional
 
 class Deps:
     def __init__(self, **kwargs):
+        """@private"""
         self._dependencies: Dict[str, Any] = {}
 
         for key, arg in kwargs.items():

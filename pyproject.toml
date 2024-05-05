@@ -1,6 +1,6 @@
 [project]
 name = "simplematrixbotlib"
-version = "3.0.0-dev"
+dynamic = ["version"]
 maintainers = [
   {name = "Isaac Beverly", email = "imbev@protonmail.com"},
 ]
@@ -29,6 +29,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+dev = [
+    "build",
+    "twine"
+]
 docs = [
     "pdoc"
 ]
@@ -42,3 +46,9 @@ Chat = "https://matrix.to/#/#simplematrixbotlib:matrix.org"
 [build-system]
 requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["simplematrixbotlib"]
+
+[tool.setuptools.dynamic]
+version = {attr = "simplematrixbotlib.__version__"}

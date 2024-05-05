@@ -1,3 +1,5 @@
+"""@private"""
+
 from typing import Iterable, get_type_hints, Optional
 from logging import getLogger
 

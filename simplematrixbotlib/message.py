@@ -3,6 +3,7 @@ from nio import RoomMessageText
 
 class Message:
     def __init__(self, event: RoomMessageText):
+        """@private"""
         self.body = event.body
         self.formatted_body = event.formatted_body
         self.event_id = event.event_id

@@ -11,6 +11,7 @@ from nio import AsyncClient, LoginError, SyncError
 from .defaults import DATA_PATH
 
 logger = getLogger(__name__)
+"""@private"""
 
 creds_path = os.path.join(DATA_PATH, "creds.json")
 
