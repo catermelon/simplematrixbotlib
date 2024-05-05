@@ -1,33 +1,41 @@
 .DEFAULT_GOAL = help
 .PHONY: help setup test build publish
 
-PYTHON_BIN ?= "/usr/bin/env python3"
+PYTHON ?= "python3"
+UV ?= "uv"
 
 help:
 	@echo --HELP--
 	@echo make help - display this message
-	@echo make setup - install dependencies
+	@echo make setup - setup development environment "("requires uv")"
 	@echo make test - run tests
 	@echo make build - build package
 	@echo make publish - upload package to pypi
-
-	@echo "(python binary: "\"${PYTHON_BIN}\"")"
+	@echo make docs - build documentation
+	@echo make docs-serve - build and serve documentation
 
 setup:
 	@echo --SETUP--
-	${PYTHON_BIN} -m pip install poetry
-	${PYTHON_BIN} -m poetry install
+	${UV} venv
+	${UV} pip compile pyproject.toml --all-extras -o requirements-dev.txt
+	${UV} pip sync requirements-dev.txt
 
-test:
+test: setup
 	@echo --TEST--
-	${PYTHON_BIN} -m poetry run python -m pytest -p no:sugar
-	${PYTHON_BIN} -m poetry run mypy simplematrixbotlib --ignore-missing-imports
-	${PYTHON_BIN} -m poetry run python -m bandit -r simplematrixbotlib
+	@echo placeholder
 
-build:
+build: setup
 	@echo --BUILD--
-	${PYTHON_BIN} -m poetry build
+	${PYTHON} -m build
 
-publish:
+publish: build
 	@echo --PUBLISH--
-	${PYTHON_BIN} -m poetry publish
+	${PYTHON} -m twine upload dist/*
+
+docs: setup
+	@echo --DOCS--
+	${PYTHON} -m pdoc simplematrixbotlib -o docs
+
+docs-serve: setup
+	@echo --DOCS--
+	${PYTHON} -m pdoc simplematrixbotlib
