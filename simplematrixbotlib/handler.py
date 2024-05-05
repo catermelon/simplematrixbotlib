@@ -54,8 +54,6 @@ class Handler:
             # noinspection PyUnusedLocal
             client = self.client
 
-        self.callable_args["deps"] = deps
-
         async def callback(room: MatrixRoom, event: Event) -> None:
             for param, arg in self.original_callable_args.items():
                 if isinstance(arg, EvalMe):
