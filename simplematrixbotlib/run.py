@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 """@private"""
 
 
-async def run_coroutine(creds: Creds, handlers: Iterable[Handler], deps: Optional[Deps] = None):
+async def run_async(creds: Creds, handlers: Iterable[Handler], deps: Optional[Deps] = None):
     client = await creds.get_valid_client()
 
     setup_callbacks(client=client, handlers=handlers, deps=deps)
@@ -25,4 +25,4 @@ async def run_coroutine(creds: Creds, handlers: Iterable[Handler], deps: Optiona
 
 
 def run(creds: Creds, handlers: Iterable[Handler], deps: Optional[Deps] = None):
-    get_event_loop().run_until_complete(run_coroutine(creds, handlers, deps))
+    get_event_loop().run_until_complete(run_async(creds, handlers, deps))
