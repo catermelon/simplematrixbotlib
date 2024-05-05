@@ -1,33 +1,32 @@
-# Simple-Matrix-Bot-Lib
-(Version 3.0.0)
+## simplematrixbotlib 3.0.0
 
-Simple-Matrix-Bot-Lib is a Python bot library for the Matrix ecosystem built on [matrix-nio](https://github.com/poljar/matrix-nio).
+simplematrixbotlib is a Python bot library for the Matrix ecosystem built on [matrix-nio](https://github.com/poljar/matrix-nio).
 
-[View Codeberg Repo](https://codeberg.org/imbev/simplematrixbotlib) ([Github Mirror](https://github.com/i10b/simplematrixbotlib)) or [View on PyPi](https://pypi.org/project/simplematrixbotlib/) or
-[View docs on readthedocs.io](https://simplematrixbotlib.readthedocs.io)
-
-Learn how you can contribute [here](CONTRIBUTING.md).
+- [Git Repository](https://codeberg.org/imbev/simplematrixbotlib) ([Mirror](https://github.com/i10b/simplematrixbotlib))
+- [Package](https://pypi.org/project/simplematrixbotlib/)
+- [Documentation](https://simplematrixbotlib.readthedocs.io)
+- [Matrix Chat](https://matrix.to/#/#simplematrixbotlib:matrix.org)
 
 ## Features
 
-- [x] hands-off approach: get started with just 10 lines of code (see [example](#Example-Usage))
-- [x] [end-to-end encryption support](https://simplematrixbotlib.readthedocs.io/en/latest/manual/encryption)
-- [x] limited [verification support](https://simplematrixbotlib.readthedocs.io/en/latest/manual/encryption#verification) (device only)
-- [x] easily [extensible config file](https://simplematrixbotlib.readthedocs.io/en/latest/manual/config/#extending-the-config-class-with-custom-settings)
-- [x] [user access management](https://simplematrixbotlib.readthedocs.io/en/latest/manual/config#allowlist)
-- [x] access the matrix-nio library to use advanced features
+- [x] Hands-off approach: get started with just 10 lines of code
+- [x] End-to-end encryption support
+- [x] Limited verification support (device only)
+- [x] Easily extendable configuration
+- [x] User access management
+- [x] Access to the matrix-nio library for advanced features
 
-## Installation
+## Setup
 
-### simplematrixbotlib can be either installed from PyPi or downloaded from github.
+### simplematrixbotlib can be installed from PyPi or cloned from github.
 
-Installation from PyPi:
+Install from PyPi:
 
 ```
 python -m pip install simplematrixbotlib
 ```
 
-[Read the docs](https://simple-matrix-bot-lib.readthedocs.io/en/latest/manual.html#e2e-encryption) to learn how to install E2E encryption support.
+Using end-to-end encryption requires matrix-nio[e2e] `python -m pip install "matrix-nio[e2e]"`
 
 Download from git repository:
 
@@ -35,34 +34,30 @@ Download from git repository:
 git clone --branch master https://codeberg.org/imbev/simplematrixbotlib.git
 ```
 
-
-
 ## Example Usage
 
 ```python
 # echo.py
 # Example:
-# randomuser - "!echo example string"
-# echo_bot - "example string"
+# randomuser - "!echo example"
+# echo_bot - "example"
 
-import simplematrixbotlib_old as botlib
-
-creds = botlib.Creds("https://home.server", "echo_bot", "pass")
-bot = botlib.Bot(creds)
-PREFIX = '!'
+from simplematrixbotlib import Creds, Bot, on_text, Message, Room, run
 
 
-@bot.listener.on_message_event
-async def echo(room, message):
-    match = botlib.MessageMatch(room, message, bot, PREFIX)
+@on_text
+async def echo(message: Message, room: Room, bot: Bot):
+    if message.args[0] != "!echo" or message.sender_id == bot.user_id:
+        return
 
-    if match.is_not_from_this_bot() and match.prefix() and match.command("echo"):
-        await bot.api.send_text_message(
-            room.room_id, " ".join(arg for arg in match.args())
-        )
+    response = ' '.join(message.args[1:])
+
+    await room.send_text(response, reply_to_event_id=message.event_id)
 
 
-bot.run()
+if __name__ == '__main__':
+    creds = Creds.from_env(homeserver="MATRIX_HOMESERVER", user="MATRIX_USER", password="MATRIX_PASSWORD")
+
+    run(creds=creds, handlers=[echo])
+
 ```
-
-More information and examples can be found [here](https://simple-matrix-bot-lib.readthedocs.io/en/latest/).
