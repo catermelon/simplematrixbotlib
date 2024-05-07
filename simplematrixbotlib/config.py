@@ -25,7 +25,7 @@ def _strip_leading_underscore(tmp: str) -> str:
     return tmp[1:] if tmp[0] == '_' else tmp
 
 
-def _check_set_regex(value: Set[str]) -> Union[Set["re.Pattern[str]"], None]:
+def _check_set_regex(value: Set[str]) -> Union[Set[re.Pattern[str]], None]:
     new_list = set()
     for v in value:
         try:
@@ -55,9 +55,9 @@ class Config:
     # TODO: auto-ignore/auto-blacklist devices/users
     # _allowed_unverified_devices etc
     _store_path: str = "./store/"
-    _allowlist: Set["re.Pattern[str]"] = field(
+    _allowlist: Set[re.Pattern[str]] = field(
         default_factory=set)  # TODO: default to bot's homeserver
-    _blocklist: Set["re.Pattern[str]"] = field(default_factory=set)
+    _blocklist: Set[re.Pattern[str]] = field(default_factory=set)
 
     def _load_config_dict(self, config_dict: dict) -> None:
         # TODO: make this into a factory, so defaults for
@@ -173,7 +173,7 @@ class Config:
         self._ignore_unverified_devices = value if self.encryption_enabled else True
 
     @property
-    def allowlist(self) -> Set["re.Pattern[str]"]:
+    def allowlist(self) -> Set[re.Pattern[str]]:
         """
         Returns
         -------
@@ -216,7 +216,7 @@ class Config:
         self._allowlist = self._allowlist - checked
 
     @property
-    def blocklist(self) -> Set["re.Pattern[str]"]:
+    def blocklist(self) -> Set[re.Pattern[str]]:
         """
         Returns
         -------
