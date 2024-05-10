@@ -1,5 +1,5 @@
 .DEFAULT_GOAL = help
-.PHONY: help setup test build publish
+.PHONY: help setup test build publish docs docs-serve clean
 
 PYTHON ?= "python3"
 UV ?= "uv"
@@ -13,6 +13,7 @@ help:
 	@echo make publish - upload package to pypi
 	@echo make docs - build documentation
 	@echo make docs-serve - build and serve documentation
+	@echo make clean - remove build artifacts
 
 setup:
 	@echo --SETUP--
@@ -39,3 +40,9 @@ docs: setup
 docs-serve: setup
 	@echo --DOCS--
 	${PYTHON} -m pdoc simplematrixbotlib
+
+clean:
+	@echo --CLEAN--
+	rm -rdf simplematrixbotlib.egg-info
+	rm -rdf dist
+
