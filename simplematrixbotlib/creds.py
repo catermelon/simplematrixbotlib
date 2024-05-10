@@ -14,9 +14,11 @@ logger = getLogger(__name__)
 """@private"""
 
 creds_path = os.path.join(DATA_PATH, "creds.json")
+"""@private"""
 
 
 def format_homeserver_url(homeserver: str) -> str:
+    """@private"""
     # noinspection HttpUrlsUsage
     if homeserver.startswith("http://") or homeserver.startswith("https://"):
         return homeserver
@@ -25,6 +27,7 @@ def format_homeserver_url(homeserver: str) -> str:
 
 
 def get_stored_access_token() -> Optional[str]:
+    """@private"""
     os.makedirs(DATA_PATH, exist_ok=True)
     if os.path.exists(creds_path):
         with open(creds_path, "r") as f:
@@ -37,6 +40,7 @@ def get_stored_access_token() -> Optional[str]:
 
 
 def store_access_token(access_token: str) -> None:
+    """@private"""
     logger.debug(
         f"Storing access token: {access_token[:7]}...{access_token[-3:]} to {creds_path}"
     )
@@ -65,6 +69,7 @@ class Creds:
         self.access_token = access_token
 
     async def get_valid_client(self) -> Optional[AsyncClient]:
+        """@private"""
         client = AsyncClient(homeserver=self.homeserver, user=self.user, store_path=f"{DATA_PATH}/store")
         client.access_token = self.access_token
         resp = await client.sync(timeout=10)
