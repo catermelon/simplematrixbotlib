@@ -2,10 +2,15 @@
 
 ### Supported Versions
 
-| Version | Supported          |
+| simplematrixbotlib | Supported          |
+|--------------------| ------------------ |
+| \>= 3.0            | ✅ |
+| < 3.0              | ❌                |
+
+| Python  | Supported          |
 |---------| ------------------ |
-| 3.x.x   | ✅ |
-| < 3.0   | ❌                |
+| \>= 3.9 | ✅ |
+| < 3.9   | ❌                |
 
 ### Reporting a Vulnerability
 
