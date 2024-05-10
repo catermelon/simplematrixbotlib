@@ -56,7 +56,11 @@ async def echo(message: Message, room: Room, bot: Bot):
 
 
 if __name__ == '__main__':
-    creds = Creds.from_env(homeserver="MATRIX_HOMESERVER", user="MATRIX_USER", password="MATRIX_PASSWORD")
+    creds = Creds.from_env(
+        homeserver="MATRIX_HOMESERVER", 
+        user="MATRIX_USER", 
+        password="MATRIX_PASSWORD"
+    )
 
     run(creds=creds, handlers=[echo])
 
