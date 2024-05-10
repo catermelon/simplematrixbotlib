@@ -122,7 +122,11 @@ simplematrixbotlib    </h1>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">creds</span> <span class="o">=</span> <span class="n">Creds</span><span class="o">.</span><span class="n">from_env</span><span class="p">(</span><span class="n">homeserver</span><span class="o">=</span><span class="s2">&quot;MATRIX_HOMESERVER&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s2">&quot;MATRIX_USER&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;MATRIX_PASSWORD&quot;</span><span class="p">)</span>
+    <span class="n">creds</span> <span class="o">=</span> <span class="n">Creds</span><span class="o">.</span><span class="n">from_env</span><span class="p">(</span>
+        <span class="n">homeserver</span><span class="o">=</span><span class="s2">&quot;MATRIX_HOMESERVER&quot;</span><span class="p">,</span> 
+        <span class="n">user</span><span class="o">=</span><span class="s2">&quot;MATRIX_USER&quot;</span><span class="p">,</span> 
+        <span class="n">password</span><span class="o">=</span><span class="s2">&quot;MATRIX_PASSWORD&quot;</span>
+    <span class="p">)</span>
 
     <span class="n">run</span><span class="p">(</span><span class="n">creds</span><span class="o">=</span><span class="n">creds</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">echo</span><span class="p">])</span>
 </code></pre>
@@ -135,18 +139,37 @@ simplematrixbotlib    </h1>
 <table>
 <thead>
 <tr>
-  <th>Version</th>
+  <th>simplematrixbotlib</th>
   <th>Supported</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td>3.x.x</td>
-  <td>:white_check_mark:</td>
+  <td>>= 3.0</td>
+  <td>✅</td>
 </tr>
 <tr>
   <td>&lt; 3.0</td>
-  <td>:x:</td>
+  <td>❌</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+  <th>Python</th>
+  <th>Supported</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>>= 3.9</td>
+  <td>✅</td>
+</tr>
+<tr>
+  <td>&lt; 3.9</td>
+  <td>❌</td>
 </tr>
 </tbody>
 </table>
