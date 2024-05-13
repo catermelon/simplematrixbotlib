@@ -25,7 +25,7 @@ def _strip_leading_underscore(tmp: str) -> str:
     return tmp[1:] if tmp[0] == '_' else tmp
 
 
-def _check_set_regex(value: Set[str]) -> Union[Set[re.Pattern], None]:
+def _check_set_regex(value: Set[str]) -> Union[Set[re.Pattern[str]], None]:
     new_list = set()
     for v in value:
         try:
@@ -55,9 +55,9 @@ class Config:
     # TODO: auto-ignore/auto-blacklist devices/users
     # _allowed_unverified_devices etc
     _store_path: str = "./store/"
-    _allowlist: Set[re.Pattern] = field(
+    _allowlist: Set[re.Pattern[str]] = field(
         default_factory=set)  # TODO: default to bot's homeserver
-    _blocklist: Set[re.Pattern] = field(default_factory=set)
+    _blocklist: Set[re.Pattern[str]] = field(default_factory=set)
     _decrypt_failure_msg = True
     _set_presence="online"
 
@@ -175,11 +175,11 @@ class Config:
         self._ignore_unverified_devices = value if self.encryption_enabled else True
 
     @property
-    def allowlist(self) -> Set[re.Pattern]:
+    def allowlist(self) -> Set[re.Pattern[str]]:
         """
         Returns
         -------
-        Set[re.Pattern]
+        Set[re.Pattern[str]]
             A set of regular expressions matching Matrix IDs.
             Can be used in conjunction with blocklist to check if the sender is allowed to issue a command to the bot.
             An empty set implies that everyone is allowed.
@@ -218,11 +218,11 @@ class Config:
         self._allowlist = self._allowlist - checked
 
     @property
-    def blocklist(self) -> Set[re.Pattern]:
+    def blocklist(self) -> Set[re.Pattern[str]]:
         """
         Returns
         -------
-        Set[re.Pattern]
+        Set[re.Pattern[str]]
             A set of regular expressions matching Matrix IDs.
             Can be used in conjunction with allowlist to check if the sender is disallowed to issue a command to the bot.
         """
