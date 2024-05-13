@@ -23,7 +23,7 @@ class Bot:
     
     """
 
-    def __init__(self, creds, config=None):
+    def __init__(self, creds: Creds, config: Optional[Config] = None):
         """
         Initializes the simplematrixbotlib.Bot class.
 
@@ -31,7 +31,6 @@ class Bot:
         ----------
         creds : simplematrixbotlib.Creds
         config : simplematrixbotlib.Config
-        decrypt_failure_msg : Boolean
 
         """
 
