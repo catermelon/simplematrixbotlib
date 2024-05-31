@@ -674,3 +674,54 @@ class Api:
             content['org.matrix.msc1767.text'] = message
 
         await self._send_room(room_id, content)
+
+    async def send_file_message(self, room_id: str, filepath: str):
+        """
+        Send a file message in a Matrix room.
+
+        Parameters
+        -----------
+        room_id : str
+            The room id of the destination of the message.
+
+        filepath : str
+            The path to the file on your machine.
+        """
+
+        mime_type = mimetypes.guess_type(filepath)[0]
+
+        file_stat = await aiofiles.os.stat(filepath)
+        async with aiofiles.open(filepath, "r+b") as file:
+            resp, decryption_keys = await self.async_client.upload(
+                file,
+                content_type=mime_type,
+                filename=os.path.basename(filepath),
+                filesize=file_stat.st_size,
+                encrypt=self.config.encryption_enabled
+            )
+        if not isinstance(resp, UploadResponse):
+            print(f"Failed Upload Response: {resp}")
+
+        content = {
+            "body": os.path.basename(filepath),
+            "info": {
+                "size": file_stat.st_size,
+                "mimetype": mime_type,
+            },
+            "msgtype": "m.file",
+            "url": resp.content_uri
+        }
+
+        if self.config.encryption_enabled:
+            content["file"] = {
+                "url": resp.content_uri,
+                "key": decryption_keys["key"],
+                "iv": decryption_keys["iv"],
+                "hashes": decryption_keys["hashes"],
+                "v": decryption_keys["v"],
+            }
+
+        try:
+            await self._send_room(room_id=room_id, content=content)
+        except:
+            print(f"Failed to send file {filepath}")
