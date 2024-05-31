@@ -1,5 +1,76 @@
 # Changelog
 
+## v2.11.0
+### 2024-02-20
+* Bump minimum matrix-nio version to 0.24
+* Use matrix-nio's ReactionEvent instead of UnknownEvent for on_reaction_event listener
+
+## v2.10.3
+### 2023-12-15
+* Bump matrix-nio version
+
+## v2.10.2
+### 2023-10-21
+* Bump Pillow version to fix CVE
+
+## [v2.10.1](https://codeberg.org/imbev/simplematrixbotlib/src/tag/v2.10.1)
+##  2023-07-24 98f933803e
+###  Notes:
+- Improvements :)
+### Additions:
+- None
+### Modifications
+- Fix Incorrect formatting of text in markdown, see issue #48
+### Removals:
+- None
+### Deprecations
+- None
+
+## [v2.10.0](https://codeberg.org/imbev/simplematrixbotlib/src/tag/v2.10.0)
+##  2023-07-24 308ab49be
+###  Notes:
+- Improvements :)
+### Additions:
+- Add configuration of connection timeout
+### Modifications
+- None
+### Removals:
+- None
+### Deprecations
+- None
+
+## [v2.9.1](https://codeberg.org/imbev/simplematrixbotlib/src/tag/v2.9.1)
+##  2023-07-24 0ad993e640
+###  Notes:
+- Bugfix, Improvements :)
+### Additions:
+- None
+### Modifications
+- Fix #43, Error on allow (adding to allowlist)
+### Removals:
+- None
+### Deprecations
+- None
+
+## [v2.9.0](https://codeberg.org/imbev/simplematrixbotlib/src/tag/v2.9.0)
+##  2023-06-06 3ad5b73f8f
+###  Notes:
+- Improvements :)
+### Additions:
+- Add sending of reactions
+- Add recovery if stored access token is invalid
+- Show proper error message when connection fails
+### Modifications
+- Improve api docs
+- Fix circular import bug
+- Update matrix-nio dependency to 0.20
+- Update pillow dependency to 9.0
+### Removals:
+- None
+### Deprecations
+- None
+
+
 ## [v2.8.0](https://codeberg.org/imbev/simplematrixbotlib/src/tag/v2.8.0)
 ##  2022-11-08 9fcf053105
 ###  Notes:

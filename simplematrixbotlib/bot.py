@@ -6,6 +6,9 @@ from nio import SyncResponse, AsyncClient
 import cryptography
 import os
 
+from simplematrixbotlib.auth import Creds
+from simplematrixbotlib.config import Config
+
 
 class Bot:
     """
@@ -20,7 +23,7 @@ class Bot:
     
     """
 
-    def __init__(self, creds, config=None):
+    def __init__(self, creds: Creds, config: Optional[Config] = None):
         """
         Initializes the simplematrixbotlib.Bot class.
 
@@ -42,7 +45,7 @@ class Bot:
         self.async_client: AsyncClient = None
         self.callbacks: botlib.Callbacks = None
 
-    async def main(self):
+    async def main(self) -> None:
         try:
             self.creds.session_read_file()
         except cryptography.fernet.InvalidToken:
@@ -59,7 +62,7 @@ class Bot:
 
         self.async_client = self.api.async_client
 
-        resp = await self.async_client.sync(timeout=65536, full_state=False
+        resp = await self.async_client.sync(timeout=self.config.timeout, full_state=False
                                             )  #Ignore prior messages
 
         if isinstance(resp, SyncResponse):
@@ -88,7 +91,7 @@ class Bot:
 
         await self.async_client.sync_forever(timeout=3000, full_state=True)
 
-    def run(self):
+    def run(self) -> None:
         """
         Runs the bot.
 

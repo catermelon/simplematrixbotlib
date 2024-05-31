@@ -243,7 +243,7 @@ class Api:
                 ignore_unverified_devices=ignore_unverified_devices
                                           or self.config.ignore_unverified_devices)
 
-    async def send_text_message(self, room_id: str, message: str, msgtype: str = "m.text"):
+    async def send_text_message(self, room_id: str, message: str, msgtype: str = "m.text", reply_to: str = ""):
         """
         Send a text message in a Matrix room.
 
@@ -257,13 +257,25 @@ class Api:
 
         msgtype : str, optional
             The type of message to send: m.text (default), m.notice, etc
+
+        reply_to : str, optional
+            The event id for replying message.
         """
 
-        await self._send_room(room_id=room_id,
-                              content={
-                                  "msgtype": msgtype,
-                                  "body": message
-                              })
+        content = {
+            "msgtype" : msgtype,
+            "body" : message,
+        }
+
+        if reply_to != "":
+            content['m.relates_to'] = {
+                "m.in_reply_to" : {
+                    "event_id" : reply_to
+                }
+            }
+            
+
+        await self._send_room(room_id=room_id, content=content)
 
     async def send_markdown_message(self, room_id: str, message, msgtype: str = "m.text"):
         """
@@ -287,7 +299,7 @@ class Api:
                                   "body": message,
                                   "format": "org.matrix.custom.html",
                                   "formatted_body": markdown.markdown(message,
-                                                                      extensions=['nl2br'])
+                                                                      extensions=['fenced_code', 'nl2br'])
                               })
 
     async def send_reaction(self, room_id: str, event, key: str):
