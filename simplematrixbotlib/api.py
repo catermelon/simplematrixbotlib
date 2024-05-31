@@ -614,3 +614,42 @@ class Api:
                 "body": message
             }
         })
+
+     async def send_location_message(self, room_id: str, uri: str, description: str = "", message: str = ""):
+        """
+        Send a location message in a Matrix room.
+
+        Parameters
+        ----------
+        room_id : str
+            The room id of the destination of the message.
+
+        uri : str
+            The geo URI scheme of the location.
+
+        description : str, optional
+            The description of the location, default uri
+
+        message : str, optional
+            The body of the message to be sent, default uri
+        """
+
+        content = {
+            "msgtype": "m.location",
+            "body": uri,
+            "geo_uri": uri,
+            "org.matrix.msc3488.location": {
+                "uri": uri,
+                "description": uri
+            },
+            "org.matrix.msc1767.text": uri,
+        }
+
+        if description:
+            content['org.matrix.msc3488.location']['description'] = description
+
+        if message:
+            content['body'] = message
+            content['org.matrix.msc1767.text'] = message
+
+        await self._send_room(room_id, content)
