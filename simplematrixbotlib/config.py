@@ -2,7 +2,7 @@ from dataclasses import dataclass, field, fields, asdict
 import os.path
 import toml
 import re
-from typing import Set, Union
+from typing import Set, Union, List
 from nio.crypto import ENCRYPTION_ENABLED
 
 
@@ -23,7 +23,7 @@ def _extract_pattern_if_neccessary(value):
     (so re.compile('@test:example.com') will become @test:example.com)
     """
     try:
-        if not isinstance(value, str):
+        if isinstance(value, Set) or isinstance(value, List):
             return [x.pattern for x in value]
         else:
             return value.pattern
