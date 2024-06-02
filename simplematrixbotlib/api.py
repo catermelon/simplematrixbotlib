@@ -422,3 +422,23 @@ class Api:
             await self._send_room(room_id=room_id, content=content)
         except:
             print(f"Failed to send video file {video_filepath}")
+
+    async def leave_room(self, room_id: str):
+        """
+        Leave a Matrix room.
+
+        room_id : str
+            The room id of the room to leave.
+        """
+
+        await self.async_client.room_leave(room_id)
+
+    async def forget_room(self, room_id: str):
+        """
+        Forget a Matrix room.
+
+        room_id : str
+            The room id of the room to forget.
+        """
+
+        await self.async_client.room_forget(room_id)
