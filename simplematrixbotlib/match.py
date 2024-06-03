@@ -1,3 +1,5 @@
+import re
+
 class Match:
     """
     Class with methods to filter events
@@ -175,4 +177,4 @@ class MessageMatch(Match):
             Returns True if the string argument is found within the body of the message.
         """
 
-        return string in self.event.body
+        return string in re.sub("^> <@.*:.*> .*\n\n", "", self.event.body)
