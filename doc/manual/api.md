@@ -40,7 +40,7 @@ An example is shown in the following python code.
 ```python
 async def example(room, message):
     match = botlib.MessageMatch(room, message, bot)
-    example_markdown = "# Hello World from [simplematrixbotlib](https://github.com/KrazyKirby99999/simple-matrix-bot-lib)!"
+    example_markdown = "# Hello World from [simplematrixbotlib](https://codeberg.org/imbev/simplematrixbotlib)!"
     if match.is_not_from_this_bot():
         await bot.api.send_markdown_message(
             room_id=room.room_id,
