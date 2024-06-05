@@ -2,17 +2,17 @@
 
 # Quickstart
 
-[View on Github](https://github.com/KrazyKirby99999/simple-matrix-bot-lib) or [View on PyPi](https://pypi.org/project/simplematrixbotlib/)
+[View on Codeberg](https://codeberg.org/imbev/simplematrixbotlib) or [View on PyPi](https://pypi.org/project/simplematrixbotlib/)
 
 ### Install the simplematrixbotlib package
-Simple-Matrix-Bot-Lib's package is simplematrixbotlib. It can be installed from pip or downloaded from github.<br>
+Simple-Matrix-Bot-Lib's package is simplematrixbotlib. It can be installed from pip or downloaded from Codeberg.<br>
 Installation from pip:
 ```
 python -m pip install simplematrixbotlib
 ```
-Download from github:
+Download from Codeberg:
 ```
-git clone --branch master https://github.com/KrazyKirby99999/simple-matrix-bot-lib.git
+git clone --branch master https://codeberg.org/imbev/simplematrixbotlib.git
 ```
 
 ### Obtain Matrix login credentials
