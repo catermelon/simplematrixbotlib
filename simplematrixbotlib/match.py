@@ -1,9 +1,5 @@
 import re
 
-
-import re
-
-
 class Match:
     """
     Class with methods to filter events
@@ -121,13 +117,13 @@ class MessageMatch(Match):
 
         Returns
         -------
-        str, Optional
+        Optional[str]
             Returns the string after removing html balise used for a reply.
         """
                 
         if self.event.formatted_body:
             if "<mx-reply>" in self.event.formatted_body:
-                return re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)[1:]
+                return re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)
         return None
 
     def command(self, command=None, case_sensitive=True):
@@ -159,7 +155,7 @@ class MessageMatch(Match):
         
         loc = self.formatted_body()
         if loc:
-            body_without_prefix = loc
+            body_without_prefix = loc[1:]
 
         if command:
             return (body_without_prefix.split()[0] == command
@@ -177,10 +173,9 @@ class MessageMatch(Match):
             Returns True if the message begins with the prefix, and False otherwise. If there is no prefix specified during the creation of this MessageMatch object, then return True.
         """
 
-        if self.event.formatted_body:
-            if "<mx-reply>" in self.event.formatted_body:
-                body_without_balise = re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)
-                return body_without_balise.startswith(self._prefix)
+        loc = self.formatted_body()
+        if loc:
+            return loc.startswith(self._prefix)
 
         return self.event.body.startswith(self._prefix)
 
@@ -195,7 +190,7 @@ class MessageMatch(Match):
             
         loc = self.formatted_body()
         if loc:
-            return loc.split()[1:]
+            return loc[1:].split()[1:]
 
         return self.event.body.split()[1:]
 
@@ -210,6 +205,6 @@ class MessageMatch(Match):
 
         loc = self.formatted_body()
         if loc:
-            return string in loc
+            return string in loc[1:]
 
         return string in self.event.body
