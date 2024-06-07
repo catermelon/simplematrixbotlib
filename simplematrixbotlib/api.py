@@ -12,6 +12,7 @@ import markdown
 import aiohttp
 from typing import List, Tuple, Union
 import re
+import uuid
 import simplematrixbotlib
 
 
@@ -442,3 +443,70 @@ class Api:
         """
 
         await self.async_client.room_forget(room_id)
+
+    async def start_poll(self, room_id: str, question: str, answers: list, disclosed: bool = True, max_selections: int = 1):
+        """
+        Start a poll in a Matrix room.
+
+        Parameters
+        ----------
+        room_id : str
+            The room id of the destination of the poll.
+        
+        question : str
+            The content of the question to be sent.
+        
+        answers : list
+            The answers of the poll to be sent.
+        
+        disclosed : bool, optional
+            Whether the poll is disclosed, default True
+
+        max_selections : int, optional
+            The maximum number of answers to be selected, default 1
+        """
+
+        content = {
+            "body": "",
+            "org.matrix.msc3381.poll.start": {
+                "question": {
+                    "org.matrix.msc1767.text": question
+                },
+                "kind": "org.matrix.msc3381.poll.disclosed",
+                "max_selections": max_selections,
+                "answers": []
+            }
+        }
+
+        if not disclosed:
+            content['org.matrix.msc3381.poll.start']['kind'] = "org.matrix.msc3381.poll.undisclosed"
+
+        for answer in answers:
+            content['org.matrix.msc3381.poll.start']['answers'].append({
+                "id": str(uuid.uuid4()),
+                "org.matrix.msc1767.text": answer
+            })
+
+        await self._send_room(room_id, content, "org.matrix.msc3381.poll.start")
+
+    async def end_poll(self, room_id: str, event):
+        """
+        End a poll in a Matrix room.
+
+        Parameters
+        ----------
+        room_id : str
+            The room id of the destination of the poll.
+
+        event :
+            The event object of the poll you want to end.
+        """
+
+        await self._send_room(room_id, {
+            "body": "",
+            "m.relates_to": {
+                "rel_type": "m.reference",
+                "event_id": event.event_id
+            },
+            "org.matrix.msc1767.text": "Ended poll"
+        }, "org.matrix.msc3381.poll.end")
