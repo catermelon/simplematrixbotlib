@@ -510,3 +510,107 @@ class Api:
             },
             "org.matrix.msc1767.text": "Ended poll"
         }, "org.matrix.msc3381.poll.end")
+
+    async def ban(self, room_id: str, user_id: str, reason: str = None):
+        """
+        Ban a user in a Matrix room.
+
+        room_id : str
+            The room id of the room that the user will be banned from.
+
+        user_id : str
+            The user id of the user that should be banned.
+
+        reason : str, optional
+            A reason for which the user is banned, default None.
+        """
+
+        await self.async_client.room_ban(room_id, user_id, reason)
+
+    async def unban(self, room_id: str, user_id: str):
+        """
+        Unban a user in a Matrix room.
+
+        room_id : str
+            The room id of the room that the user will be unbanned from.
+
+        user_id : str
+            The user id of the user that should be unbanned.
+        """
+
+        await self.async_client.room_unban(room_id, user_id)
+
+    async def kick(self, room_id: str, user_id: str, reason: str = None):
+        """
+        Kick a user in a Matrix room.
+
+        room_id : str
+            The room id of the room that the user will be kicked from.
+
+        user_id : str
+            The user id of the user that should be kicked.
+
+        reason : str, optional
+            A reason for which the user is banned, default None.
+        """
+
+        await self.async_client.room_kick(room_id, user_id, reason)
+
+    async def invite(self, room_id: str, user_id: str):
+        """
+        Invite a user into a Matrix room.
+
+        room_id : str
+            The room id of the room that the user will be invited to.
+
+        user_id : str
+            The user id of the user that should be invited.
+        """
+
+        await self.async_client.room_invite(room_id, user_id)
+
+    async def redact(self, room_id: str, event_id: str, reason: str = None):
+        """
+        Redact an event in a Matrix room.
+
+        room_id : str
+            The room id of the room that the event will be redacted from.
+
+        event_id : str
+            The event id of the event you want to redact.
+
+        reason : str, optional
+            A reason for which the user is redacted, default None.
+        """
+
+        await self.async_client.room_redact(room_id, event_id, reason)
+
+    async def edit(self, room_id: str, message: str, event_id: str, msgtype: str = "m.text"):
+        """
+        Edit an event in a Matrix room.
+
+        room_id : str
+            The room id of the destination of the message.
+
+        message : str
+            The new content of the message to be sent.
+
+        event_id : str
+            The event id of the event you want to edit.
+
+        msgtype : str, optional
+            The type of new message to send: m.text (default), m.notice, etc
+        """
+
+        await self._send_room(room_id, {
+            "msgtype": "m.text",
+            "body": "* "+message,
+            "m.relates_to": {
+                "rel_type": "m.replace",
+                "event_id": event_id
+            },
+            "m.new_content": {
+                "msgtype": msgtype,
+                "body": message
+            }
+        })
