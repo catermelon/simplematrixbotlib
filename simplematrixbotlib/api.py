@@ -674,3 +674,19 @@ class Api:
             content['org.matrix.msc1767.text'] = message
 
         await self._send_room(room_id, content)
+
+    async def send_typing_notice(self, room_id: str, typing_state: bool = True, timeout: int = 30000):
+        """
+        Send a typing notice in a Matrix room.
+
+        room_id : str
+            The room id where the bot is typing.
+
+        typing_state : bool, optional
+            A flag representing whether the bot started or stopped typing, default True.
+
+        timeout : int, optional
+            For how long should the new typing notice be valid for in milliseconds, default 30000
+        """
+
+        await self.async_client.room_typing(room_id, typing_state, timeout)
