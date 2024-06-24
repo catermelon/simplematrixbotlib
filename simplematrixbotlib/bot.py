@@ -5,6 +5,7 @@ import simplematrixbotlib as botlib
 from nio import SyncResponse, AsyncClient
 import cryptography
 import os
+import inspect
 
 from simplematrixbotlib.auth import Creds
 from simplematrixbotlib.config import Config
@@ -86,8 +87,12 @@ class Bot:
         await self.callbacks.setup_callbacks()
 
         for action in self.listener._startup_registry:
-            for room_id in self.async_client.rooms:
-                await action(room_id)
+            sig = inspect.signature(action)
+            if len(sig.parameters) == 0:
+                asyncio.ensure_future(action())
+            else:
+                for room_id in self.async_client.rooms:
+                    await action(room_id)
 
         await self.async_client.sync_forever(timeout=3000, full_state=True)
 
