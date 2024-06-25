@@ -690,3 +690,42 @@ class Api:
         """
 
         await self.async_client.room_typing(room_id, typing_state, timeout)
+
+    async def change_power_level(self, room_id: str, user_id: str, power_level: int):
+        """
+        Change the power level of a user in a Matrix room.
+
+        Parameters
+        ----------
+        room_id : str
+            The room id of the room where the power level will be changed.
+
+        user_id : str
+            The user id of the user who will be given a new power level.
+
+        power_level : int
+            The power level.
+        """
+
+        response = await self.async_client.room_get_state(room_id)
+
+        content = response.events[-1]['content']
+        content['users'][user_id] = power_level
+
+        await self.async_client.room_put_state(room_id, "m.room.power_levels", content)
+
+    async def get_room_state(self, room_id: str):
+        """
+        Get the state of the room.
+
+        Returns a list.
+
+        Parameters
+        ----------
+        room_id : str
+            The room id of the room.
+        """
+
+        response = await self.async_client.room_get_state(room_id)
+
+        return response.events[-1]['content']
