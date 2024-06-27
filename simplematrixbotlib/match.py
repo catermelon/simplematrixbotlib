@@ -124,6 +124,8 @@ class MessageMatch(Match):
         if self.event.formatted_body:
             if "<mx-reply>" in self.event.formatted_body:
                 return re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)
+            else:
+                return self.event.formatted_body
         return None
 
     def command(self, command=None, case_sensitive=True):
