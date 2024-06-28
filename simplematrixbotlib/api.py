@@ -303,7 +303,7 @@ class Api:
                                                         extensions=['fenced_code', 'nl2br'])
                 }
 
-        if reply_to != "":
+        if reply_to:
             content['m.relates_to'] = {
                 "m.in_reply_to" : {
                     "event_id" : reply_to
