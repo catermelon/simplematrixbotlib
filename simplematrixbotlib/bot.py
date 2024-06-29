@@ -30,6 +30,7 @@ class Bot:
         Parameters
         ----------
         creds : simplematrixbotlib.Creds
+        config : simplematrixbotlib.Config
 
         """
 
@@ -89,7 +90,7 @@ class Bot:
             for room_id in self.async_client.rooms:
                 await action(room_id)
 
-        await self.async_client.sync_forever(timeout=3000, full_state=True)
+        await self.async_client.sync_forever(timeout=3000, full_state=True, set_presence=self.config._set_presence)
 
     def run(self) -> None:
         """

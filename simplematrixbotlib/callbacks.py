@@ -82,17 +82,17 @@ class Callbacks:
             return
 
         print(
-            f"Failed to decrypt message: {event.event_id} from {event.sender} in {room.room_id}. "
+            f"\nFailed to decrypt message: {event.event_id} from {event.sender} in {room.room_id}. "
             "If this error persists despite verification, reset the crypto session by deleting "
             f"{self.bot.config.store_path} and {self.bot.creds._session_stored_file}. "
-            "You will have to verify any verified devices anew.")
-
-        if self.bot.config.send_decryption_error_message_in_room:
+            "You will have to verify any verified devices anew.\n")
+        if self.bot.config._decrypt_failure_msg:
             await self.bot.api.send_text_message(
                 room.room_id, "Failed to decrypt your message. "
-                              "Make sure encryption is enabled in my config and "
-                              "either enable sending messages to unverified devices or verify me if possible.",
+                "Make sure encryption is enabled in my config and "
+                "either enable sending messages to unverified devices or verify me if possible.",
                 msgtype='m.notice')
+
 
     async def emoji_verification(self, event):
         """

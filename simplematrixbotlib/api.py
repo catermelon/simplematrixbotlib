@@ -278,7 +278,7 @@ class Api:
 
         await self._send_room(room_id=room_id, content=content)
 
-    async def send_markdown_message(self, room_id: str, message, msgtype: str = "m.text"):
+    async def send_markdown_message(self, room_id: str, message, msgtype: str = "m.text", reply_to: str = ""):
         """
         Send a markdown message in a Matrix room.
 
@@ -292,16 +292,26 @@ class Api:
 
         msgtype : str, optional
             The type of message to send: m.text (default), m.notice, etc
-        """
 
-        await self._send_room(room_id=room_id,
-                              content={
-                                  "msgtype": msgtype,
-                                  "body": message,
-                                  "format": "org.matrix.custom.html",
-                                  "formatted_body": markdown.markdown(message,
-                                                                      extensions=['fenced_code', 'nl2br'])
-                              })
+        reply_to : str, optional
+            The event id for replying message.
+        """
+        content = {
+                    "msgtype": msgtype,
+                    "body": message,
+                    "format": "org.matrix.custom.html",
+                    "formatted_body": markdown.markdown(message,
+                                                        extensions=['fenced_code', 'nl2br'])
+                }
+
+        if reply_to:
+            content['m.relates_to'] = {
+                "m.in_reply_to" : {
+                    "event_id" : reply_to
+                }
+            }
+
+        await self._send_room(room_id=room_id, content=content)
 
     async def send_reaction(self, room_id: str, event, key: str):
         """
@@ -351,11 +361,13 @@ class Api:
 
         file_stat = await aiofiles.os.stat(image_filepath)
         async with aiofiles.open(image_filepath, "r+b") as file:
-            resp, maybe_keys = await self.async_client.upload(
+            resp, decryption_keys = await self.async_client.upload(
                 file,
                 content_type=mime_type,
                 filename=os.path.basename(image_filepath),
-                filesize=file_stat.st_size)
+                filesize=file_stat.st_size,
+                encrypt=self.config.encryption_enabled
+            )
         if isinstance(resp, UploadResponse):
             pass  # Successful upload
         else:
@@ -374,6 +386,15 @@ class Api:
             "msgtype": "m.image",
             "url": resp.content_uri
         }
+
+        if self.config.encryption_enabled:
+            content["file"] = {
+                "url": resp.content_uri,
+                "key": decryption_keys["key"],
+                "iv": decryption_keys["iv"],
+                "hashes": decryption_keys["hashes"],
+                "v": decryption_keys["v"],
+            }
 
         try:
             await self._send_room(room_id=room_id, content=content)

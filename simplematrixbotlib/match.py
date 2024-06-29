@@ -1,3 +1,5 @@
+import re
+
 class Match:
     """
     Class with methods to filter events
@@ -110,6 +112,22 @@ class MessageMatch(Match):
         super().__init__(room, event, bot)
         self._prefix = prefix
 
+    def formatted_body(self):
+        """
+
+        Returns
+        -------
+        Optional[str]
+            Returns the string after removing html balise used for a reply.
+        """
+                
+        if self.event.formatted_body:
+            if "<mx-reply>" in self.event.formatted_body:
+                return re.sub(r'<mx-reply>.*?</mx-reply>', '', self.event.formatted_body)
+            else:
+                return self.event.formatted_body
+        return None
+
     def command(self, command=None, case_sensitive=True):
         """
         Parameters
@@ -136,6 +154,10 @@ class MessageMatch(Match):
 
         if not body_without_prefix:
             return []
+        
+        loc = self.formatted_body()
+        if loc:
+            body_without_prefix = loc[1:]
 
         if command:
             return (body_without_prefix.split()[0] == command
@@ -153,6 +175,10 @@ class MessageMatch(Match):
             Returns True if the message begins with the prefix, and False otherwise. If there is no prefix specified during the creation of this MessageMatch object, then return True.
         """
 
+        loc = self.formatted_body()
+        if loc:
+            return loc.startswith(self._prefix)
+
         return self.event.body.startswith(self._prefix)
 
     def args(self):
@@ -163,6 +189,10 @@ class MessageMatch(Match):
         list
             Returns a list of strings that are the "words" of the message, except for the first "word", which would be the command.
         """
+            
+        loc = self.formatted_body()
+        if loc:
+            return loc[1:].split()[1:]
 
         return self.event.body.split()[1:]
 
@@ -174,5 +204,9 @@ class MessageMatch(Match):
         boolean
             Returns True if the string argument is found within the body of the message.
         """
+
+        loc = self.formatted_body()
+        if loc:
+            return string in loc[1:]
 
         return string in self.event.body
