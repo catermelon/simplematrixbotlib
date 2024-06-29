@@ -52,3 +52,7 @@ include = ["simplematrixbotlib"]
 
 [tool.setuptools.dynamic]
 version = {attr = "simplematrixbotlib.__version__"}
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

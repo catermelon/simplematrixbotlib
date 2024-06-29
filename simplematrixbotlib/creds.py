@@ -8,13 +8,14 @@ from typing import Optional
 
 from nio import AsyncClient, LoginError, SyncError
 
-from .defaults import DATA_PATH
+from .config import Config
 
 logger = getLogger(__name__)
 """@private"""
 
-creds_path = os.path.join(DATA_PATH, "creds.json")
-"""@private"""
+
+def get_creds_path(config: Config = Config()) -> str:
+    return os.path.join(config.data_path, "creds.json")
 
 
 def format_homeserver_url(homeserver: str) -> str:
@@ -26,11 +27,11 @@ def format_homeserver_url(homeserver: str) -> str:
         return "https://" + homeserver
 
 
-def get_stored_access_token() -> Optional[str]:
+def get_stored_access_token(config: Config = Config()) -> Optional[str]:
     """@private"""
-    os.makedirs(DATA_PATH, exist_ok=True)
-    if os.path.exists(creds_path):
-        with open(creds_path, "r") as f:
+    os.makedirs(config.data_path, exist_ok=True)
+    if os.path.exists(get_creds_path(config)):
+        with open(get_creds_path(config), "r") as f:
             data = json.load(f)
             try:
                 return data["access_token"]
@@ -39,13 +40,14 @@ def get_stored_access_token() -> Optional[str]:
     return None
 
 
-def store_access_token(access_token: str) -> None:
+def store_access_token(access_token: str, config: Config = Config()) -> None:
     """@private"""
+    creds_path = get_creds_path(config)
     logger.debug(
         f"Storing access token: {access_token[:7]}...{access_token[-3:]} to {creds_path}"
     )
 
-    os.makedirs(DATA_PATH, exist_ok=True)
+    os.makedirs(config.data_path, exist_ok=True)
 
     data = {}
     if os.path.exists(creds_path):
@@ -63,14 +65,16 @@ class Creds:
     access_token: str
     regenerate_if_invalid: bool
 
-    def __init__(self, homeserver: str, user: str, access_token: str):
+    def __init__(self, homeserver: str, user: str, access_token: str, config: Config = Config()):
         self.homeserver = format_homeserver_url(homeserver)
         self.user = user
         self.access_token = access_token
+        self.config = config
 
     async def get_valid_client(self) -> Optional[AsyncClient]:
         """@private"""
-        client = AsyncClient(homeserver=self.homeserver, user=self.user, store_path=f"{DATA_PATH}/store")
+        store_path = f"{self.config.data_path}/store"
+        client = AsyncClient(homeserver=self.homeserver, user=self.user, store_path=store_path)
         client.access_token = self.access_token
         resp = await client.sync(timeout=10)
         if isinstance(resp, SyncError):
@@ -90,9 +94,10 @@ class Creds:
 
         access_token_is_valid = False
         access_token = get_stored_access_token()
+        client: Optional[AsyncClient]
         if access_token:
             creds = cls(homeserver, username, access_token)
-            client: Optional[AsyncClient] = get_event_loop().run_until_complete(
+            client = get_event_loop().run_until_complete(
                 creds.get_valid_client()
             )
             if client:
@@ -109,18 +114,21 @@ class Creds:
                 or (regenerate_if_invalid and not access_token_is_valid):
 
             resp = get_event_loop().run_until_complete(
-                client.login(password, device_name="simplematrixbotlib")
+                client.login( # type: ignore
+                    password,
+                    device_name="simplematrixbotlib"
+                )
             )
 
             if isinstance(resp, LoginError):
                 raise RuntimeError(resp.message)
 
-            access_token = client.access_token
+            access_token = client.access_token # type: ignore
 
             logger.debug("Successfully generated access token from username and password")
 
         get_event_loop().run_until_complete(
-            client.close()
+            client.close() # type: ignore
         )
 
         return cls(

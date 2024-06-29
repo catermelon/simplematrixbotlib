@@ -9,7 +9,7 @@ __version__ = "3.0.0-dev"
 
 from .bot import Bot
 from .creds import Creds
-from .defaults import DATA_PATH
+from .config import Config
 from .deps import Deps
 from .listeners import on_text
 from .message import Message

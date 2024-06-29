@@ -26,8 +26,8 @@ class Room:
             try:
                 content["m.relates_to"]
             except KeyError:
-                content["m.relates_to"] = {}
-            content["m.relates_to"]["m.in_reply_to"] = {
+                content["m.relates_to"] = {} # type: ignore
+            content["m.relates_to"]["m.in_reply_to"] = { # type: ignore
                 "event_id": reply_to_event_id
             }
         await self.client.room_send(
