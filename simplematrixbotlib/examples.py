@@ -1,0 +1,3 @@
+"""
+.. include:: ../EXAMPLES.md
+"""

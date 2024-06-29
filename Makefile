@@ -39,10 +39,9 @@ docs: setup
 
 docs-serve: setup
 	@echo --DOCS--
-	${PYTHON} -m pdoc simplematrixbotlib
+	${PYTHON} -m pdoc simplematrixbotlib --port 8000
 
 clean:
 	@echo --CLEAN--
 	rm -rdf simplematrixbotlib.egg-info
 	rm -rdf dist
-
