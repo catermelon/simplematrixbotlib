@@ -35,11 +35,11 @@ publish: build
 
 docs: setup
 	@echo --DOCS--
-	${PYTHON} -m pdoc simplematrixbotlib -o docs
+	${PYTHON} -m pdoc simplematrixbotlib -o docs --mermaid
 
 docs-serve: setup
 	@echo --DOCS--
-	${PYTHON} -m pdoc simplematrixbotlib --port 8000
+	${PYTHON} -m pdoc simplematrixbotlib --port 8000 --mermaid
 
 clean:
 	@echo --CLEAN--
