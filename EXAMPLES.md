@@ -36,7 +36,7 @@ if __name__ == '__main__':
 This code is very similar to the previous. A `Config` object is created within the dunder boilerplate. The `join_room_on_invite_enabled` setting (True by default) is then set to False. Finally, the config object is passed to the `run` function. See `simplematrixbotlib.config` for more options
 
 ```python
-from simplematrixbotlib import Creds, Bot, on_text, Message, Room, run
+from simplematrixbotlib import Config, Creds, Bot, on_text, Message, Room, run
 
 
 @on_text

@@ -12,6 +12,10 @@ def on_text(handler: Union[Handler, Callable]) -> Handler:
     return Handler(handler, listener=on_text)
 
 
+def on_membership_change(handler: Union[Handler, Callable]) -> Handler:
+    return Handler(handler, listener=on_membership_change)
+
+
 LISTENER_EVENT_MAPPING = MappingProxyType({
     on_text: RoomMessageText
 })

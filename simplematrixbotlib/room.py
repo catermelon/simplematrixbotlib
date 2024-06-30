@@ -14,8 +14,10 @@ class Room:
         self.client = client
         self.nio_room = room
 
+
     def __repr__(self):
         return f"{self.room_id}: {self.name}"
+
 
     async def send_text(self, message_body: str, reply_to_event_id: Optional[str] = None):
         content = {
@@ -35,3 +37,7 @@ class Room:
             message_type="m.room.message",
             content=content
         )
+
+
+    async def join(self):
+        await self.client.join(self.room_id)

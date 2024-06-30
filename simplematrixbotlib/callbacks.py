@@ -3,7 +3,7 @@
 from typing import Iterable, get_type_hints, Optional
 from logging import getLogger
 
-from nio import AsyncClient, RoomMessageText
+from nio import AsyncClient, RoomMessageText, InviteMemberEvent
 
 from .bot import Bot
 from .deps import Deps
@@ -36,23 +36,41 @@ def bot_wrapper(handler: Handler):
             handler.original_callable_args[param] = EvalMe("Bot(self.client)")
 
 
+def membership_change_wrapper(handler: Handler):
+    logger.debug(f"Wrapping {handler.callable} for Membership Change)")
+    for param, param_class in get_type_hints(handler.callable).items():
+        if param_class is InviteMemberEvent:
+            handler.original_callable_args[param] = EvalMe("event")
+
+
 def setup_callbacks(
         client: AsyncClient, handlers: Iterable[Handler], deps: Optional[Deps]
 ) -> None:
     logger.debug(f"Setting up callbacks for handlers: {handlers}")
     room_message_text_callbacks = []
+    room_membership_change_callbacks = []
     for handler in handlers:
         bot_wrapper(handler)
         for listener in handler.listeners:
-            match listener:
-                case on_text:
+            match listener.__name__:
+                case 'on_text':
                     message_wrapper(handler)
                     room_wrapper(handler)
+                    break
+                case 'on_membership_change':
+                    membership_change_wrapper(handler)
+                    room_wrapper(handler)
+                    break
         handler.eval_callback_args(client=client, deps=deps)
         for listener in handler.listeners:
-            match listener:
-                case on_text:
+            match listener.__name__:
+                case 'on_text':
                     room_message_text_callbacks.append(handler.nio_callback)
+                    break
+                case 'on_membership_change':
+                    room_membership_change_callbacks.append(handler.nio_callback)
                     break
     for callback in room_message_text_callbacks:
         client.add_event_callback(callback, RoomMessageText)
+    for callback in room_membership_change_callbacks:
+        client.add_event_callback(callback, InviteMemberEvent) # type: ignore

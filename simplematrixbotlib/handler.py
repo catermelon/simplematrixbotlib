@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Awaitable, Callable, Optional, Union
 
-from nio import Event, MatrixRoom, AsyncClient
+from nio import Event, MatrixRoom, AsyncClient, InviteMemberEvent
 
 from .deps import Deps
 from .eval_me import EvalMe
@@ -60,6 +60,7 @@ class Handler:
                     self.callable_args[param] = eval(arg.to_eval)
                 if isinstance(arg, Deps):
                     self.callable_args[param] = self.deps
+
             await self.callable(**self.callable_args)
 
         self.nio_callback = callback

@@ -1,22 +1,33 @@
 import logging
 
 from asyncio import get_event_loop
-from typing import Iterable, Optional
+from typing import List, Optional
 
-from nio import AsyncClient
+from nio import AsyncClient, InviteMemberEvent
 
 from .callbacks import setup_callbacks
 from .creds import Creds
 from .config import Config
 from .deps import Deps
 from .handler import Handler
+from .listeners import on_membership_change
+from .room import Room
 
 logger = logging.getLogger(__name__)
 """@private"""
 
 
-async def run_async(creds: Creds, handlers: Iterable[Handler], deps: Optional[Deps] = None):
-    client: AsyncClient = await creds.get_valid_client()
+@on_membership_change
+async def join_room_on_invite_handler(room: Room, event: InviteMemberEvent):
+    if event.membership == 'invite':
+        await room.join()
+
+
+async def run_async(creds: Creds, handlers: List[Handler], config: Config, deps: Optional[Deps] = None):
+    client: AsyncClient = await creds.get_valid_client() # type: ignore
+
+    if config.join_room_on_invite_enabled:
+        handlers.append(join_room_on_invite_handler)
 
     setup_callbacks(client=client, handlers=handlers, deps=deps)
 
@@ -27,5 +38,5 @@ async def run_async(creds: Creds, handlers: Iterable[Handler], deps: Optional[De
         await client.close()
 
 
-def run(creds: Creds, handlers: Iterable[Handler], config: Config = Config(), deps: Optional[Deps] = None):
-    get_event_loop().run_until_complete(run_async(creds, handlers, deps))
+def run(creds: Creds, handlers: List[Handler], config: Config = Config(), deps: Optional[Deps] = None):
+    get_event_loop().run_until_complete(run_async(creds, handlers, config, deps))
