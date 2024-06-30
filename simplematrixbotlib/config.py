@@ -60,6 +60,7 @@ class Config:
     _blocklist: Set[re.Pattern[str]] = field(default_factory=set)
     _decrypt_failure_msg = True
     _set_presence="online"
+    _first_sync_full: bool = False
 
     def _load_config_dict(self, config_dict: dict) -> None:
         # TODO: make this into a factory, so defaults for
@@ -258,3 +259,18 @@ class Config:
         if checked is None:
             return
         self._blocklist = self._blocklist - checked
+
+    @property
+    def first_sync_full(self) -> bool:
+        """
+        Returns
+        -------
+        boolean
+            If True, the first sync in sync loop is a full sync.
+            Default: False
+        """
+        return self._first_sync_full
+
+    @first_sync_full.setter
+    def first_sync_full(self, value: bool) -> None:
+        self._first_sync_full = value
