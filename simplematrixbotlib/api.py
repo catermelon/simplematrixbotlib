@@ -636,7 +636,7 @@ class Api:
             }
         })
 
-     async def send_location_message(self, room_id: str, uri: str, description: str = "", message: str = ""):
+    async def send_location_message(self, room_id: str, uri: str, description: str = "", message: str = ""):
         """
         Send a location message in a Matrix room.
 
