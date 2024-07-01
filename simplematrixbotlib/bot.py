@@ -63,8 +63,8 @@ class Bot:
 
         self.async_client = self.api.async_client
 
-        resp = await self.async_client.sync(timeout=self.config.timeout, full_state=False
-                                            )  #Ignore prior messages
+        resp = await self.async_client.sync(timeout=self.config.timeout, full_state=self.config.first_sync_full
+                                            )  #Ignore prior messages if full_state=False (default)
 
         if isinstance(resp, SyncResponse):
             print(
