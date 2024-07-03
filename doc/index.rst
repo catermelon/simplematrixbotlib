@@ -3,8 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
+
+
 Welcome to Simple-Matrix-Bot-Lib's documentation!
 =================================================
+
+**Warning! This documentation is currently unmaintained and may be out of date. Updated documentation coming soon with simplematrixbotlib version 3.**
 Simple-Matrix-Bot-Lib is a Python 3 library for quickly building Matrix bots. It is based on the matrix-nio Python library. To begin using Simple-Matrix-Bot-Lib, :ref:`check out the quickstart <quickstart>`.
 
 .. toctree::
