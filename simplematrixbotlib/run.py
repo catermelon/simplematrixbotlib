@@ -24,6 +24,8 @@ async def join_room_on_invite_handler(room: Room, event: InviteMemberEvent):
 
 
 async def run_async(creds: Creds, handlers: List[Handler], config: Config, deps: Optional[Deps] = None):
+    config.log()
+
     client: AsyncClient = await creds.get_valid_client() # type: ignore
 
     if config.join_room_on_invite_enabled:
