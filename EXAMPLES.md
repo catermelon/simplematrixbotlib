@@ -62,3 +62,20 @@ if __name__ == '__main__':
     run(creds=creds, handlers=[echo], config=config)
 
 ```
+
+## Configuration using TOML
+
+The following demonstrates how to use an external TOML file for configuration.
+
+
+```python
+
+config = Config.load_toml("config.toml")
+
+```
+
+config.toml:
+```toml
+[tool.simplematrixbotlib]
+join_room_on_invite_enabled = false
+```
