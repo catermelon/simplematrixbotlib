@@ -5,11 +5,13 @@ from nio.exceptions import OlmUnverifiedDeviceError
 from nio.responses import UploadResponse
 import nio
 from PIL import Image
+from shutil import which
 import aiofiles.os
 import mimetypes
 import os
 import markdown
 import aiohttp
+import asyncio
 from typing import List, Tuple, Union
 import re
 import uuid
@@ -44,6 +46,21 @@ def split_mxid(mxid: str) -> Union[Tuple[str, str], Tuple[None, None]]:
     if match is None:
         return None, None
     return match.group('localpart'), match.group('hostname')
+
+
+async def ffprobe(path: str, entries: str):
+    process = await asyncio.create_subprocess_exec("ffprobe.exe" if os.name == "nt" else "ffprobe",
+                                                   "-i",
+                                                   path,
+                                                   "-show_entries",
+                                                   entries,
+                                                   "-v",
+                                                   "quiet",
+                                                   "-of",
+                                                   "csv=p=0",
+                                                   stdout=asyncio.subprocess.PIPE)
+    stdout = await process.stdout.read()
+    return stdout.decode().strip()
 
 
 class Api:
@@ -274,7 +291,7 @@ class Api:
                     "event_id" : reply_to
                 }
             }
-            
+
 
         await self._send_room(room_id=room_id, content=content)
 
@@ -473,13 +490,13 @@ class Api:
         ----------
         room_id : str
             The room id of the destination of the poll.
-        
+
         question : str
             The content of the question to be sent.
-        
+
         answers : list
             The answers of the poll to be sent.
-        
+
         disclosed : bool, optional
             Whether the poll is disclosed, default True
 
@@ -729,3 +746,58 @@ class Api:
         response = await self.async_client.room_get_state(room_id)
 
         return response.events[-1]['content']
+
+    async def send_audio_message(self, room_id: str, audio_filepath: str):
+        """
+        Send an audio message in a Matrix room.
+
+        Parameters
+        ----------
+        room_id : str
+            The room id of the destination of the message.
+
+        audio_filepath : str
+            The path to the audio on your machine.
+        """
+
+        mime_type = mimetypes.guess_type(audio_filepath)[0]
+        file_stat = await aiofiles.os.stat(audio_filepath)
+
+        async with aiofiles.open(audio_filepath, "r+b") as file:
+            resp, decryption_keys = await self.async_client.upload(
+                file,
+                content_type=mime_type,
+                filename=os.path.basename(audio_filepath),
+                filesize=file_stat.st_size,
+                encrypt=self.config.encryption_enabled
+            )
+
+        if not isinstance(resp, UploadResponse):
+            print(f"Failed Upload Response: {resp}")
+
+        content = {
+            "body": os.path.basename(audio_filepath),
+            "info": {
+                "size": file_stat.st_size,
+                "mimetype": mime_type
+            },
+            "msgtype": "m.audio",
+            "url": resp.content_uri,
+        }
+
+        if which("ffprobe"):
+            content['info']['duration'] = int(float(await ffprobe(audio_filepath, "format=duration")) * 1000)
+
+        if self.config.encryption_enabled:
+            content["file"] = {
+                "url": resp.content_uri,
+                "key": decryption_keys["key"],
+                "iv": decryption_keys["iv"],
+                "hashes": decryption_keys["hashes"],
+                "v": decryption_keys["v"],
+            }
+
+        try:
+            await self._send_room(room_id=room_id, content=content)
+        except:
+            print(f"Failed to send audio file {audio_filepath}")
