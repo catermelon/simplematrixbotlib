@@ -212,6 +212,8 @@ class Api:
         """
         Send a custom event in a Matrix room.
 
+        Returns the homeserver's response.
+
         Parameters
         -----------
         room_id : str
@@ -229,7 +231,7 @@ class Api:
         """
 
         try:
-            await self.async_client.room_send(
+            return await self.async_client.room_send(
                 room_id=room_id,
                 message_type=message_type,
                 content=content,
@@ -254,7 +256,7 @@ class Api:
                 if len(unverified) > 0:
                     print(f"\tUser {user}: {', '.join(unverified)}")
 
-            await self.async_client.room_send(
+            return await self.async_client.room_send(
                 room_id=room_id,
                 message_type=message_type,
                 content=content,
@@ -264,6 +266,8 @@ class Api:
     async def send_text_message(self, room_id: str, message: str, msgtype: str = "m.text", reply_to: str = ""):
         """
         Send a text message in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         -----------
@@ -292,12 +296,13 @@ class Api:
                 }
             }
 
-
-        await self._send_room(room_id=room_id, content=content)
+        return await self._send_room(room_id=room_id, content=content)
 
     async def send_markdown_message(self, room_id: str, message, msgtype: str = "m.text", reply_to: str = ""):
         """
         Send a markdown message in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         -----------
@@ -328,11 +333,13 @@ class Api:
                 }
             }
 
-        await self._send_room(room_id=room_id, content=content)
+        return await self._send_room(room_id=room_id, content=content)
 
     async def send_reaction(self, room_id: str, event, key: str):
         """
         Send a reaction to a message in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         ----------
@@ -346,7 +353,7 @@ class Api:
             The content of the reaction. This is usually an emoji, but may technically be any text.
         """
 
-        await self._send_room(
+        return await self._send_room(
             room_id=room_id,
             content={
                 "m.relates_to": {
@@ -361,6 +368,8 @@ class Api:
     async def send_image_message(self, room_id: str, image_filepath: str):
         """
         Send an image message in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         -----------
@@ -414,13 +423,15 @@ class Api:
             }
 
         try:
-            await self._send_room(room_id=room_id, content=content)
+            return await self._send_room(room_id=room_id, content=content)
         except:
             print(f"Failed to send image file {image_filepath}")
 
     async def send_video_message(self, room_id: str, video_filepath: str):
         """
         Send a video message in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         ----------
@@ -461,7 +472,7 @@ class Api:
             content['info']['duration'] = int(float(await ffprobe(video_filepath, "format=duration") * 1000))
 
         try:
-            await self._send_room(room_id=room_id, content=content)
+            return await self._send_room(room_id=room_id, content=content)
         except:
             print(f"Failed to send video file {video_filepath}")
 
@@ -488,6 +499,8 @@ class Api:
     async def start_poll(self, room_id: str, question: str, answers: list, disclosed: bool = True, max_selections: int = 1):
         """
         Start a poll in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         ----------
@@ -528,7 +541,7 @@ class Api:
                 "org.matrix.msc1767.text": answer
             })
 
-        await self._send_room(room_id, content, "org.matrix.msc3381.poll.start")
+        return await self._send_room(room_id, content, "org.matrix.msc3381.poll.start")
 
     async def end_poll(self, room_id: str, event):
         """
@@ -660,6 +673,8 @@ class Api:
         """
         Send a location message in a Matrix room.
 
+        Returns the homeserver's response.
+
         Parameters
         ----------
         room_id : str
@@ -693,7 +708,7 @@ class Api:
             content['body'] = message
             content['org.matrix.msc1767.text'] = message
 
-        await self._send_room(room_id, content)
+        return await self._send_room(room_id, content)
 
     async def send_typing_notice(self, room_id: str, typing_state: bool = True, timeout: int = 30000):
         """
@@ -754,6 +769,8 @@ class Api:
         """
         Send an audio message in a Matrix room.
 
+        Returns the homeserver's response.
+
         Parameters
         ----------
         room_id : str
@@ -801,6 +818,6 @@ class Api:
             }
 
         try:
-            await self._send_room(room_id=room_id, content=content)
+            return await self._send_room(room_id=room_id, content=content)
         except:
             print(f"Failed to send audio file {audio_filepath}")
