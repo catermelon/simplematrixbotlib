@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable
 
-from nio import Event, MatrixRoom, RoomMessage, RoomMessageText, ReactionEvent
+from nio import Event, MatrixRoom, RoomMessageText, ReactionEvent
 
 if TYPE_CHECKING:
     from simplematrixbotlib.bot import Bot

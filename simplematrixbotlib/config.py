@@ -10,19 +10,17 @@ def _config_dict_factory(tmp) -> dict:
     return {
         'simplematrixbotlib': {
             'config':
-            {_strip_leading_underscore(name): _extract_pattern_if_neccessary(value)
+            {name.lstrip("_"): _extract_pattern_if_neccessary(value)
              for name, value in tmp}
         }
     }
+
 
 def _extract_pattern_if_neccessary(value):
     try:
         return value.pattern
     except AttributeError:
         return value
-
-def _strip_leading_underscore(tmp: str) -> str:
-    return tmp[1:] if tmp[0] == '_' else tmp
 
 
 def _check_set_regex(value: Set[str]) -> Union[Set[re.Pattern[str]], None]:
@@ -66,7 +64,7 @@ class Config:
         # TODO: make this into a factory, so defaults for
         # non-loaded values can be set based on loaded values?
         existing_fields = [
-            _strip_leading_underscore(f.name) for f in fields(self)
+            f.name.lstip("_") for f in fields(self)
         ]
         for key, value in config_dict.items():
             if key not in existing_fields:

@@ -1,5 +1,4 @@
 import asyncio
-import sys
 from typing import Optional
 import simplematrixbotlib as botlib
 from nio import SyncResponse, AsyncClient
@@ -13,14 +12,14 @@ from simplematrixbotlib.config import Config
 class Bot:
     """
     A class for the bot library user to interact with.
-    
+
     ...
 
     Attributes
     ----------
     api : simplematrixbotlib.Api
         An instance of the simplematrixbotlib.Api class.
-    
+
     """
 
     def __init__(self, creds: Creds, config: Optional[Config] = None):
@@ -50,8 +49,8 @@ class Bot:
         try:
             self.creds.session_read_file()
         except cryptography.fernet.InvalidToken:
-            print("Invalid Stored Token")
-            print("Regenerating token from provided credentials")
+            print("Invalid Stored Token\n"
+                  "Regenerating token from provided credentials")
             os.remove(self.creds._session_stored_file)
             self.creds.session_read_file()
 

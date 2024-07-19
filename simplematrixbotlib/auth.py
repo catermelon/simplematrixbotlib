@@ -97,8 +97,7 @@ class Creds:
                 self.device_id = decrypted_session_data[0]
                 self.access_token = decrypted_session_data[1]
 
-                if not self.device_id or not self.access_token or (
-                        self.device_id == "") or (self.access_token == ""):
+                if not (self.device_id or self.access_token):
                     raise ValueError(
                         f"Can't load credentials: device ID '{self.device_id}' or access token '{self.access_token}' were not properly saved. "
                         f"Reset your session by deleting {self._session_stored_file} and the crypto store if encryption is enabled."
@@ -122,10 +121,6 @@ class Creds:
         if not (self.device_id and self.access_token):
             raise ValueError(
                 f"Can't save credentials: missing device ID '{self.device_id}' or access token '{self.access_token}'"
-            )
-        elif (self.device_id == "") or (self.access_token == ""):
-            raise ValueError(
-                f"Can't save credentials: empty device ID '{self.device_id}' or access token '{self.access_token}'"
             )
 
         session_data = str([self.device_id, self.access_token])

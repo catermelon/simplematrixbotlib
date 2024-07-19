@@ -13,6 +13,7 @@ import markdown
 import aiohttp
 import asyncio
 from typing import List, Tuple, Union
+from collections.abc import Iterable
 import re
 import uuid
 import simplematrixbotlib
@@ -61,6 +62,10 @@ async def ffprobe(path: str, entries: str):
                                                    stdout=asyncio.subprocess.PIPE)
     stdout = await process.stdout.read()
     return stdout.decode().strip()
+
+def pil(path: str):
+    image = Image.open(path)
+    return image.size
 
 
 class Api:
@@ -237,13 +242,12 @@ class Api:
                 content=content,
                 ignore_unverified_devices=ignore_unverified_devices
                                           or self.config.ignore_unverified_devices)
-        except OlmUnverifiedDeviceError as e:
-            # print(str(e))
+        except OlmUnverifiedDeviceError:
             print(
                 "Message could not be sent. "
-                "Set ignore_unverified_devices = True to allow sending to unverified devices."
+                "Set ignore_unverified_devices = True to allow sending to unverified devices.\n"
+                "Automatically blacklisting the following devices:"
             )
-            print("Automatically blacklisting the following devices:")
             for user in self.async_client.rooms[room_id].users:
                 unverified: List[str] = list()
                 for device_id, device in self.async_client.olm.device_store[
@@ -289,7 +293,7 @@ class Api:
             "body" : message,
         }
 
-        if reply_to != "":
+        if reply_to:
             content['m.relates_to'] = {
                 "m.in_reply_to" : {
                     "event_id" : reply_to
@@ -379,11 +383,11 @@ class Api:
         image_filepath : str
             The path to the image on your machine.
         """
+        loop = asyncio.get_running_loop()
 
         mime_type = mimetypes.guess_type(image_filepath)[0]
 
-        image = Image.open(image_filepath)
-        (width, height) = image.size
+        (width, height) = await loop.run_in_executor(None, pil, image_filepath)
 
         file_stat = await aiofiles.os.stat(image_filepath)
         async with aiofiles.open(image_filepath, "r+b") as file:
@@ -394,9 +398,7 @@ class Api:
                 filesize=file_stat.st_size,
                 encrypt=self.config.encryption_enabled
             )
-        if isinstance(resp, UploadResponse):
-            pass  # Successful upload
-        else:
+        if not isinstance(resp, UploadResponse):
             print(f"Failed Upload Response: {resp}")
 
         content = {
@@ -452,9 +454,7 @@ class Api:
                 filename=os.path.basename(video_filepath),
                 filesize=file_stat.st_size)
 
-        if isinstance(resp, UploadResponse):
-            pass  # Successful upload
-        else:
+        if not isinstance(resp, UploadResponse):
             print(f"Failed Upload Response: {resp}")
 
         content = {
@@ -480,6 +480,8 @@ class Api:
         """
         Leave a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the room to leave.
         """
@@ -490,13 +492,15 @@ class Api:
         """
         Forget a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the room to forget.
         """
 
         await self.async_client.room_forget(room_id)
 
-    async def start_poll(self, room_id: str, question: str, answers: list, disclosed: bool = True, max_selections: int = 1):
+    async def start_poll(self, room_id: str, question: str, answers: Iterable, disclosed: bool = True, max_selections: int = 1):
         """
         Start a poll in a Matrix room.
 
@@ -569,6 +573,8 @@ class Api:
         """
         Ban a user in a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the room that the user will be banned from.
 
@@ -585,6 +591,8 @@ class Api:
         """
         Unban a user in a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the room that the user will be unbanned from.
 
@@ -598,6 +606,8 @@ class Api:
         """
         Kick a user in a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the room that the user will be kicked from.
 
@@ -614,6 +624,8 @@ class Api:
         """
         Invite a user into a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the room that the user will be invited to.
 
@@ -627,6 +639,8 @@ class Api:
         """
         Redact an event in a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the room that the event will be redacted from.
 
@@ -643,6 +657,8 @@ class Api:
         """
         Edit an event in a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id of the destination of the message.
 
@@ -714,6 +730,8 @@ class Api:
         """
         Send a typing notice in a Matrix room.
 
+        Parameters
+        ----------
         room_id : str
             The room id where the bot is typing.
 

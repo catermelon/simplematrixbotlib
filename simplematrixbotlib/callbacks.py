@@ -93,7 +93,6 @@ class Callbacks:
                 "either enable sending messages to unverified devices or verify me if possible.",
                 msgtype='m.notice')
 
-
     async def emoji_verification(self, event):
         """
         Callback for handling interactive verification using emoji.
@@ -139,7 +138,7 @@ class Callbacks:
                             ):  # second step: receive m.key.verification.key
                 sas = self.async_client.key_verifications[event.transaction_id]
 
-                print(f"{sas.get_emoji()}")
+                print(sas.get_emoji())
 
                 yn = input("Do the emojis match? (Y/N) (C for Cancel) ")
                 if yn.lower() == "y":
@@ -185,8 +184,8 @@ class Callbacks:
                           f"sas.canceled = {sas.canceled}\n"
                           f"sas.timed_out = {sas.timed_out}\n"
                           f"sas.verified = {sas.verified}\n"
-                          f"sas.verified_devices = {sas.verified_devices}\n")
-                    print("Emoji verification was successful!")
+                          f"sas.verified_devices = {sas.verified_devices}\n\n"
+                          "Emoji verification was successful!")
                     # TODO: share room keys(?) to formerly blacklisted devices
                     # Error: ** Unable to decrypt: decryption key withheld **
             else:
