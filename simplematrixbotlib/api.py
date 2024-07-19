@@ -457,6 +457,9 @@ class Api:
             "url": resp.content_uri
         }
 
+        if which("ffprobe"):
+            content['info']['duration'] = int(float(await ffprobe(video_filepath, "format=duration") * 1000))
+
         try:
             await self._send_room(room_id=room_id, content=content)
         except:
