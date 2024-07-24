@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.12.0
+### 2024-07-24
+* Reexport typing via py.typed
+* Use Python 3.9 as minimum version
+* Add config option to not spam decryption error on invite
+* Add API for leaving and forgetting rooms
+* Add API for sending polls
+* Add API for administration
+* Add API for sending location
+* Add reply_to to send_markdown_message
+* Improve configuration for device_name
+* Add encryption support for send_image_message
+* Improve reply/formatted message match handling
+* Add config option to do the first sync full
+* Fix minor bugs
+
 ## v2.11.0
 ### 2024-02-20
 * Bump minimum matrix-nio version to 0.24
@@ -155,9 +171,9 @@
 ## [v2.6.3](https://github.com/i10b/simplematrixbotlib/releases/tag/v2.6.3)
 ##  2022-04-06 5f54f69
 ###  Notes:
-- The command matcher now has support for case-insensitive matches.  
+- The command matcher now has support for case-insensitive matches.
 ### Additions:
-- Add case insensitive option to command matcher 
+- Add case insensitive option to command matcher
 ### Modifications
 - Update Pillow Dependency to version 9.0.1
 ### Removals:
@@ -306,7 +322,7 @@ async def echo(room, message):
 
     if match.is_not_from_this_bot() and match.prefix() and match.command(
             "echo"):
-            
+
         response = " ".join(arg for arg in match.args())
         await bot.api.send_text_message(room.room_id, response, "m.notice") ## Uses the msgtype of m.notice instead of m.text
 
@@ -506,7 +522,7 @@ Final release of v1
 ### Additions:
 - None
 ### Modifications:
-- Fix dependency error upon package installation 
+- Fix dependency error upon package installation
 ### Removals:
 - None
 ### Deprecations:
@@ -616,7 +632,7 @@ None
 ### Additions:
 - None
 ### Modifications:
-- Ignore messages sent before bot run 
+- Ignore messages sent before bot run
 ### Removals:
 - None
 ### Deprecations:
@@ -654,7 +670,7 @@ None
 - None
 ### Modifications:
 - Implement callbacks into Bot
-- Refactor asyncio loop 
+- Refactor asyncio loop
 ### Removals:
 - None
 ### Deprecations:
@@ -666,7 +682,7 @@ None
 ### Additions:
 - None
 ### Modifications:
-- Add additional keywords to setup.py 
+- Add additional keywords to setup.py
 ### Removals:
 - None
 ### Deprecations:
