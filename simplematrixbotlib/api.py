@@ -653,7 +653,7 @@ class Api:
 
         await self.async_client.room_redact(room_id, event_id, reason)
 
-    async def edit(self, room_id: str, message: str, event_id: str, msgtype: str = "m.text"):
+    async def edit(self, room_id: str, message: str, event_id: str, markdown: bool = False, msgtype: str = "m.text"):
         """
         Edit an event in a Matrix room.
 
@@ -668,11 +668,14 @@ class Api:
         event_id : str
             The event id of the event you want to edit.
 
+        markdown : bool, optional
+            Whether the new message should be markdown, default False.
+
         msgtype : str, optional
             The type of new message to send: m.text (default), m.notice, etc
         """
 
-        await self._send_room(room_id, {
+        content = {
             "msgtype": "m.text",
             "body": "* "+message,
             "m.relates_to": {
@@ -683,7 +686,16 @@ class Api:
                 "msgtype": msgtype,
                 "body": message
             }
-        })
+        }
+
+        if markdown:
+            content['m.new_content'].append({
+                    "format": "org.matrix.custom.html",
+                    "formatted_body": markdown.markdown(message,
+                                                        extensions=['sane_lists', 'fenced_code', 'nl2br'])
+                })
+
+        await self._send_room(room_id, content)
 
     async def send_location_message(self, room_id: str, uri: str, description: str = "", message: str = ""):
         """
