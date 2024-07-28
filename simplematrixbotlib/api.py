@@ -327,7 +327,7 @@ class Api:
                     "body": message,
                     "format": "org.matrix.custom.html",
                     "formatted_body": markdown.markdown(message,
-                                                        extensions=['fenced_code', 'nl2br'])
+                                                        extensions=['sane_lists', 'fenced_code', 'nl2br'])
                 }
 
         if reply_to:
