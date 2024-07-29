@@ -185,12 +185,15 @@ class MessageMatch(Match):
 
         return (loc[1:] if loc else self.event.body).split()[1:]
 
-    def contains(self, string, case_sensitive: bool = True):
+    def contains(self, string, regex: bool = False, case_sensitive: bool = True):
         """
         Parameters
         -------
         string
             The pattern to be found within the body of the message.
+
+        regex : bool, Optional
+            Whether the pattern should be matched as regex, default False.
 
         case_sensitive : bool, Optional
             Whether the string should be matched case sensitive, default True.
@@ -206,5 +209,8 @@ class MessageMatch(Match):
 
         if not case_sensitive:
             body = body.lower()
+
+        if regex:
+            return bool(re.search(string, body, 0 if case_sensitive else re.IGNORECASE))
 
         return (string if case_sensitive else string.lower()) in body
