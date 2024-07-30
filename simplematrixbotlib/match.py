@@ -213,4 +213,7 @@ class MessageMatch(Match):
         if regex:
             return bool(re.search(string, body, 0 if case_sensitive else re.IGNORECASE))
 
+        if not isinstance(string, str):
+            return any(body in (a if case_sensitive else a.lower()) for a in string)
+
         return (string if case_sensitive else string.lower()) in body
