@@ -10,7 +10,7 @@ from .creds import Creds
 from .config import Config
 from .deps import Deps
 from .handler import Handler
-from .listeners import on_membership_change
+from .listeners import on_membership_change, on_ready
 from .room import Room
 
 logger = logging.getLogger(__name__)
@@ -35,6 +35,10 @@ async def run_async(creds: Creds, handlers: List[Handler], config: Config, deps:
 
     try:
         logger.info("Ready")
+        await client.sync()
+        for handler in handlers:
+            if on_ready in handler.listeners:
+                await handler.nio_callback(None, None) #type: ignore
         await client.sync_forever(timeout=30_000)
     finally:
         await client.close()

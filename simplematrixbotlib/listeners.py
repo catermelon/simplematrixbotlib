@@ -14,7 +14,5 @@ def on_membership_change(handler: Union[Handler, Callable]) -> Handler:
     return Handler(handler, listener=on_membership_change)
 
 
-"""@private"""
-LISTENER_EVENT_MAPPING = MappingProxyType({
-    on_text: RoomMessageText
-})
+def on_ready(handler: Union[Handler, Callable]) -> Handler:
+    return Handler(handler, listener=on_ready)

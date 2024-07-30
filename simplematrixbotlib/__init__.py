@@ -11,7 +11,7 @@ from .bot import Bot
 from .creds import Creds
 from .config import Config
 from .deps import Deps
-from .listeners import on_text, on_membership_change
+from .listeners import on_text, on_membership_change, on_ready
 from .message import Message
 from .room import Room
 from .run import run
