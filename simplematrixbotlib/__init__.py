@@ -14,4 +14,4 @@ from .deps import Deps
 from .listeners import on_text, on_membership_change, on_ready
 from .message import Message
 from .room import Room
-from .run import run
+from .run import run, run_async
