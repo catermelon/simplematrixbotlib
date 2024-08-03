@@ -1,8 +1,27 @@
-from typing import Optional
+from typing import Optional, Literal
 
+import asyncio
 import markdown
+import mimetypes
+import os
+import aiofiles.os
 
 from nio import MatrixRoom, AsyncClient
+
+
+async def ffprobe(path: str, entries: str):
+    process = await asyncio.create_subprocess_exec("ffprobe.exe" if os.name == "nt" else "ffprobe",
+                                                   "-i",
+                                                   path,
+                                                   "-show_entries",
+                                                   entries,
+                                                   "-v",
+                                                   "quiet",
+                                                   "-of",
+                                                   "csv=p=0",
+                                                   stdout=asyncio.subprocess.PIPE)
+    stdout = await process.stdout.read()
+    return stdout.decode().strip()
 
 
 class Room:
@@ -49,6 +68,46 @@ class Room:
             message_type="m.room.message",
             content=content
         )
+
+    async def send_media(self, filepath: str, filetype: Optional[Literal[str]] = None, room_id: Optional[str] = None):
+        if not room_id:
+            room_id = self.room_id
+
+        mime_type = mimetypes.guess_type(filepath)[0]
+
+        if not filetype:
+            filetype = "file"
+            if mime_type and mime_type.split("/")[0] in ("video", "audio", "image"):
+                filetype = mime_type.split("/")[0]
+
+        basename = os.path.basename(filepath)
+
+        file_stat = await aiofiles.os.stat(filepath)
+        async with aiofiles.open(filepath, "r+b") as file:
+            resp, _ = await self.client.upload(
+                file,
+                content_type=mime_type,
+                filename=basename,
+                filesize=file_stat.st_size
+            )
+
+        content = {
+            "body": basename,
+            "info": {
+                "size": file_stat.st_size,
+                "mimetype": mime_type,
+            },
+            "msgtype": "m."+filetype,
+            "url": resp.content_uri
+        }
+
+        if filetype in ("video", "audio"):
+            content["info"]["duration"] = int(float(await ffprobe(filepath, "format=duration") * 1000))
+        if filetype in ("image", "video"):
+            (width, height) = await ffprobe(filepath, "stream=width,height").split(",")
+            content["info"].append({"w": width, "h": height})
+
+        await self.client.room_send(room_id, "m.room.message", content)
 
     async def join(self):
         await self.client.join(self.room_id)
