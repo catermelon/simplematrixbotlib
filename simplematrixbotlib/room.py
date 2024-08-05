@@ -109,6 +109,36 @@ class Room:
 
         await self.client.room_send(room_id, "m.room.message", content)
 
+    async def send_reaction(self, event_id: str, key: str, room_id: Optional[str] = None):
+        """
+        Send a reaction to a message in a Matrix room.
+
+        Parameters
+        ----------
+        event_id : str
+            The event id of the event you want to react to.
+
+        key: str
+            The content of the reaction. This is usually an emoji, but may technically be any text.
+
+        room_id : str, optional
+            The room id of the destination of the message.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_send(
+            room_id=room_id,
+            message_type="m.reaction",
+            content={
+                "m.relates_to": {
+                    "event_id": event_id,
+                    "key": key,
+                    "rel_type": "m.annotation"
+                }
+            }
+        )
+
     async def ban(self, user_id: str, reason: Optional[str] = None, room_id: Optional[str] = None):
         """
         Ban a user in a Matrix room.
