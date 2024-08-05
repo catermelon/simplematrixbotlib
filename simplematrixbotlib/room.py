@@ -1,4 +1,4 @@
-from typing import Optional, Literal
+from typing import Optional, Literal, Union
 from collections.abc import Iterable
 from uuid import uuid4
 
@@ -8,7 +8,14 @@ import mimetypes
 import os
 import aiofiles.os
 
-from nio import MatrixRoom, AsyncClient
+from nio import (MatrixRoom,
+                 AsyncClient,
+                 RoomSendResponse,
+                 RoomSendError,
+                 RoomLeaveResponse,
+                 RoomLeaveError,
+                 RoomForgetResponse,
+                 RoomForgetError)
 
 
 async def ffprobe(path: str, entries: str):
@@ -40,7 +47,7 @@ class Room:
     def __repr__(self):
         return f"{self.room_id}: {self.name}"
 
-    async def send_text(self, message_body: str, format_as_markdown: bool = False, reply_to_event_id: Optional[str] = None, room_id: Optional[str] = None):
+    async def send_text(self, message_body: str, format_as_markdown: bool = False, reply_to_event_id: Optional[str] = None, room_id: Optional[str] = None) -> Union[RoomSendResponse, RoomSendError]:
         if not room_id:
             room_id = self.room_id
 
@@ -65,13 +72,13 @@ class Room:
                 "event_id": reply_to_event_id
             }
 
-        await self.client.room_send(
+        return await self.client.room_send(
             room_id=room_id,
             message_type="m.room.message",
             content=content
         )
 
-    async def send_media(self, filepath: str, filetype: Optional[Literal[str]] = None, room_id: Optional[str] = None):
+    async def send_media(self, filepath: str, filetype: Optional[Literal[str]] = None, room_id: Optional[str] = None) -> Union[RoomSendResponse, RoomSendError]:
         if not room_id:
             room_id = self.room_id
 
@@ -109,11 +116,13 @@ class Room:
             (width, height) = await ffprobe(filepath, "stream=width,height").split(",")
             content["info"].append({"w": width, "h": height})
 
-        await self.client.room_send(room_id, "m.room.message", content)
+        return await self.client.room_send(room_id, "m.room.message", content)
 
-    async def send_reaction(self, event_id: str, key: str, room_id: Optional[str] = None):
+    async def send_reaction(self, event_id: str, key: str, room_id: Optional[str] = None) -> Union[RoomSendResponse, RoomSendError]:
         """
         Send a reaction to a message in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         ----------
@@ -129,7 +138,7 @@ class Room:
         if not room_id:
             room_id = self.room_id
 
-        await self.client.room_send(
+        return await self.client.room_send(
             room_id=room_id,
             message_type="m.reaction",
             content={
@@ -141,9 +150,11 @@ class Room:
             }
         )
 
-    async def send_location_message(self, uri: str, location_description: Optional[str] = None, message: Optional[str] = None, room_id: Optional[str] = None):
+    async def send_location_message(self, uri: str, location_description: Optional[str] = None, message: Optional[str] = None, room_id: Optional[str] = None) -> Union[RoomSendResponse, RoomSendError]:
         """
         Send a location message in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         ----------
@@ -180,11 +191,13 @@ class Room:
             content["body"] = message
             content["org.matrix.msc1767.text"] = message
 
-        await self.client.room_send(room_id, "m.room.message", content)
+        return await self.client.room_send(room_id, "m.room.message", content)
 
-    async def start_poll(self, question: str, answers: Iterable, disclosed: bool = True, max_selections: int = 1, room_id: Optional[str] = None):
+    async def start_poll(self, question: str, answers: Iterable, disclosed: bool = True, max_selections: int = 1, room_id: Optional[str] = None) -> Union[RoomSendResponse, RoomSendError]:
         """
         Start a poll in a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         ----------
@@ -227,7 +240,7 @@ class Room:
                 "org.matrix.msc1767.text": answer
             })
 
-        await self.client.room_send(room_id, "org.matrix.msc3381.poll.start", content)
+        return await self.client.room_send(room_id, "org.matrix.msc3381.poll.start", content)
 
     async def end_poll(self, event_id: str, room_id: Optional[str] = None):
         """
@@ -420,9 +433,11 @@ class Room:
 
         await self.client.room_put_state(room_id, "m.room.power_levels", content)
 
-    async def leave(self, forget: bool = True, room_id: Optional[str] = None):
+    async def leave(self, forget: bool = True, room_id: Optional[str] = None) -> Union[RoomLeaveResponse, RoomLeaveError] | Optional[tuple[Union[RoomLeaveResponse, RoomLeaveError], Union[RoomForgetResponse, RoomForgetError]]]:
         """
         Leave a Matrix room.
+
+        Returns the homeserver's response.
 
         Parameters
         ----------
@@ -435,10 +450,13 @@ class Room:
         if not room_id:
             room_id = self.room_id
 
-        await self.client.room_leave(room_id)
+        leave_response = await self.client.room_leave(room_id)
 
         if forget:
-            await self.client.room_forget(room_id)
+            forget_response = await self.client.room_forget(room_id)
+            return leave_response, forget_response
+
+        return leave_response
 
     async def join(self):
         await self.client.join(self.room_id)
