@@ -420,5 +420,25 @@ class Room:
 
         await self.client.room_put_state(room_id, "m.room.power_levels", content)
 
+    async def leave(self, forget: bool = True, room_id: Optional[str] = None):
+        """
+        Leave a Matrix room.
+
+        Parameters
+        ----------
+        forget : bool, optional
+            Whether to forget the room, default True.
+
+        room_id : str, optional
+            The room id of the room to leave.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_leave(room_id)
+
+        if forget:
+            await self.client.room_forget(room_id)
+
     async def join(self):
         await self.client.join(self.room_id)
