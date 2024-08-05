@@ -1,4 +1,6 @@
 from typing import Optional, Literal
+from collections.abc import Iterable
+from uuid import uuid4
 
 import asyncio
 import markdown
@@ -179,6 +181,77 @@ class Room:
             content["org.matrix.msc1767.text"] = message
 
         await self.client.room_send(room_id, "m.room.message", content)
+
+    async def start_poll(self, question: str, answers: Iterable, disclosed: bool = True, max_selections: int = 1, room_id: Optional[str] = None):
+        """
+        Start a poll in a Matrix room.
+
+        Parameters
+        ----------
+        question : str
+            The content of the question to be sent.
+
+        answers : Iterable
+            The answers of the poll to be sent.
+
+        disclosed : bool, optional
+            Whether the poll is disclosed, default True
+
+        max_selections : int, optional
+            The maximum number of answers to be selected, default 1
+
+        room_id : str, optional
+            The room id of the destination of the poll.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        content = {
+            "body": "",
+            "org.matrix.msc3381.poll.start": {
+                "question": {
+                    "org.matrix.msc1767.text": question
+                },
+                "kind": "org.matrix.msc3381.poll.disclosed",
+                "max_selections": max_selections,
+                "answers": []
+            }
+        }
+
+        if not disclosed:
+            content["org.matrix.msc3381.poll.start"]["kind"] = "org.matrix.msc3381.poll.undisclosed"
+
+        for answer in answers:
+            content["org.matrix.msc3381.poll.start"]["answers"].append({
+                "id": str(uuid4()),
+                "org.matrix.msc1767.text": answer
+            })
+
+        await self.client.room_send(room_id, "org.matrix.msc3381.poll.start", content)
+
+    async def end_poll(self, event_id: str, room_id: Optional[str] = None):
+        """
+        End a poll in a Matrix room.
+
+        Parameters
+        ----------
+        event_id : str
+            The event id of the poll you want to end.
+
+        room_id : str, optional
+            The room id of the destination of the poll.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_send(room_id, "org.matrix.msc3381.poll.end", {
+            "body": "",
+            "m.relates_to": {
+                "rel_type": "m.reference",
+                "event_id": event_id
+            },
+            "org.matrix.msc1767.text": "Ended poll"
+        })
 
     async def ban(self, user_id: str, reason: Optional[str] = None, room_id: Optional[str] = None):
         """
