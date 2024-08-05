@@ -109,5 +109,172 @@ class Room:
 
         await self.client.room_send(room_id, "m.room.message", content)
 
+    async def ban(self, user_id: str, reason: Optional[str] = None, room_id: Optional[str] = None):
+        """
+        Ban a user in a Matrix room.
+
+        Parameters
+        ----------
+        user_id : str
+            The user id of the user that should be banned.
+
+        reason : str, optional
+            A reason for which the user is banned.
+
+        room_id : str, optional
+            The room id of the room that the user will be banned from.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_ban(room_id, user_id, reason)
+
+    async def unban(self, user_id: str, room_id: Optional[str] = None):
+        """
+        Unban a user in a Matrix room.
+
+        Parameters
+        ----------
+        user_id : str
+            The user id of the user that should be unbanned.
+
+        room_id : str, optional
+            The room id of the room that the user will be unbanned from.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_unban(room_id, user_id)
+
+    async def kick(self, user_id: str, reason: Optional[str] = None, room_id: Optional[str] = None):
+        """
+        Kick a user in a Matrix room.
+
+        Parameters
+        ----------
+        user_id : str
+            The user id of the user that should be kicked.
+
+        reason : str, optional
+            A reason for which the user is banned.
+
+        room_id : str, optional
+            The room id of the room that the user will be kicked from.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_kick(room_id, user_id, reason)
+
+    async def invite(self, user_id: str, room_id: Optional[str] = None):
+        """
+        Invite a user into a Matrix room.
+
+        Parameters
+        ----------
+        user_id : str
+            The user id of the user that should be invited.
+
+        room_id : str, optional
+            The room id of the room that the user will be invited to.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_invite(room_id, user_id)
+
+    async def redact(self, event_id: str, reason: Optional[str] = None, room_id: Optional[str] = None):
+        """
+        Redact an event in a Matrix room.
+
+        Parameters
+        ----------
+        event_id : str
+            The event id of the event you want to redact.
+
+        reason : str, optional
+            A reason for which the user is redacted.
+
+        room_id : str, optional
+            The room id of the room that the event will be redacted from.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        await self.client.room_redact(room_id, event_id, reason)
+
+    async def edit(self, event_id: str, message_body: str, format_as_markdown: bool = False, room_id: Optional[str] = None):
+        """
+        Edit an event in a Matrix room.
+
+        Parameters
+        ----------
+        event_id : str
+            The event id of the event you want to edit.
+
+        message_body : str
+            The new content of the message to be sent.
+
+        format_as_markdown : bool, optional
+            Whether the new message should be markdown, default False.
+
+        room_id : str, optional
+            The room id of the destination of the message.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        content = {
+            "msgtype": "m.text",
+            "body": "* "+message_body,
+            "m.relates_to": {
+                "rel_type": "m.replace",
+                "event_id": event_id
+            },
+            "m.new_content": {
+                "msgtype": "m.text",
+                "body": message_body
+            }
+        }
+
+        if format_as_markdown:
+            md = markdown.markdown(message_body,
+                                   extensions=["sane_lists", "fenced_code", "nl2br"])
+
+            content["body"] = "* "+message_body
+            content["m.new_content"]["body"] = message_body
+
+            content["m.new_content"].append({
+                    "format": "org.matrix.custom.html",
+                    "formatted_body": md
+                })
+
+        await self.client.room_send(room_id, "m.room.message", content)
+
+    async def change_power_level(self, power_level: int, user_id: str, room_id: Optional[str] = None):
+        """
+        Change the power level of a user in a Matrix room.
+
+        Parameters
+        ----------
+        power_level : int
+            The power level.
+
+        user_id : str
+            The user id of the user who will be given a new power level.
+
+        room_id : str, optional
+            The room id of the room where the power level will be changed.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        response = await self.client.room_get_state(room_id)
+
+        content = response.events[-1]["content"]
+        content["users"][user_id] = power_level
+
+        await self.client.room_put_state(room_id, "m.room.power_levels", content)
+
     async def join(self):
         await self.client.join(self.room_id)
