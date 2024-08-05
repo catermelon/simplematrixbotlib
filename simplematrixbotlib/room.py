@@ -139,6 +139,47 @@ class Room:
             }
         )
 
+    async def send_location_message(self, uri: str, location_description: Optional[str] = None, message: Optional[str] = None, room_id: Optional[str] = None):
+        """
+        Send a location message in a Matrix room.
+
+        Parameters
+        ----------
+        uri : str
+            The geo URI scheme of the location.
+
+        location_description : str, optional
+            The description of the location, default uri
+
+        message : str, optional
+            The body of the message to be sent, default uri
+
+        room_id : str, optional
+            The room id of the destination of the message.
+        """
+        if not room_id:
+            room_id = self.room_id
+
+        content = {
+            "msgtype": "m.location",
+            "body": uri,
+            "geo_uri": uri,
+            "org.matrix.msc3488.location": {
+                "uri": uri,
+                "description": uri
+            },
+            "org.matrix.msc1767.text": uri,
+        }
+
+        if location_description:
+            content["org.matrix.msc3488.location"]["description"] = location_description
+
+        if message:
+            content["body"] = message
+            content["org.matrix.msc1767.text"] = message
+
+        await self.client.room_send(room_id, "m.room.message", content)
+
     async def ban(self, user_id: str, reason: Optional[str] = None, room_id: Optional[str] = None):
         """
         Ban a user in a Matrix room.
