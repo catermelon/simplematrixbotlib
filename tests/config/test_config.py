@@ -110,7 +110,8 @@ def test_write_toml():
         "ignore_unverified_devices = true\n"
         "store_path = \"./store/\"\n"
         "allowlist = []\n"
-        "blocklist = []\n")
+        "blocklist = []\n"
+        "first_sync_full = false\n")
     assert os.path.isfile(tmp_file)
     with open(tmp_file, 'r') as f:
         assert f.read() == default_values
