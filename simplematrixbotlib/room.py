@@ -457,6 +457,3 @@ class Room:
             return leave_response, forget_response
 
         return leave_response
-
-    async def join(self):
-        await self.client.join(self.room_id)

@@ -23,3 +23,6 @@ class Bot:
             rooms.append(Room(matrix_room, self.nio_client))
 
         return rooms
+
+    async def join(self, room_id):
+        await self.client.join(room_id)
