@@ -16,6 +16,9 @@ def _config_dict_factory(tmp) -> dict:
     }
 
 def _extract_pattern_if_neccessary(value):
+    if type(value) is list or type(value) is set:
+        return [_extract_pattern_if_neccessary(item) for item in value]
+
     try:
         return value.pattern
     except AttributeError:
