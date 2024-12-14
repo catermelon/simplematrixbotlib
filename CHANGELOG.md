@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.12.1
+### 2024-12-13
+* Fix bug with toml configuration and sets
+
 ## v2.12.0
 ### 2024-07-24
 * Reexport typing via py.typed
