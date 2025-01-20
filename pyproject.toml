@@ -1,24 +1,18 @@
 [tool.poetry]
 name = "simplematrixbotlib"
-version = "2.12.1"
+version = "2.12.2"
 description = "An easy to use bot library for the Matrix ecosystem written in Python."
 authors = ["imbev <imbev@protonmail.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://codeberg.org/imbev/simplematrixbotlib"
 documentation = "https://simple-matrix-bot-lib.readthedocs.io/en/latest/"
-keywords = [
-    "simple",
-    "matrix",
-    "bot",
-    "lib",
-    "simple-matrix-bot-lib"
-]
+keywords = ["simple", "matrix", "bot", "lib", "simple-matrix-bot-lib"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
     "Topic :: Communications :: Chat",
-    "Topic :: Internet"
+    "Topic :: Internet",
 ]
 
 [tool.poetry.urls]

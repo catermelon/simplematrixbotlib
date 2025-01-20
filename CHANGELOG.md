@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.12.2
+### 2025-01-20
+* Use header auth for Auth Token check per MSC4126
+
 ## v2.12.1
 ### 2024-12-13
 * Fix bug with toml configuration and sets
