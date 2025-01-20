@@ -109,7 +109,8 @@ class Api:
 
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f'{self.creds.homeserver}/_matrix/client/r0/account/whoami?access_token={self.creds.access_token}'
+                    f'{self.creds.homeserver}/_matrix/client/r0/account/whoami',
+                    headers={'Authorization': f'Bearer {self.creds.access_token}'}
                 ) as response:
                     if isinstance(response, nio.responses.LoginError):
                         raise Exception(response)
@@ -274,7 +275,7 @@ class Api:
                     "event_id" : reply_to
                 }
             }
-            
+
 
         await self._send_room(room_id=room_id, content=content)
 
@@ -473,13 +474,13 @@ class Api:
         ----------
         room_id : str
             The room id of the destination of the poll.
-        
+
         question : str
             The content of the question to be sent.
-        
+
         answers : list
             The answers of the poll to be sent.
-        
+
         disclosed : bool, optional
             Whether the poll is disclosed, default True
 
