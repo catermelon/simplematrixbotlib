@@ -314,7 +314,7 @@ class Api:
 
         await self._send_room(room_id=room_id, content=content)
 
-    async def send_reaction(self, room_id: str, event, key: str):
+    async def send_reaction(self, room_id: str, event_id: str, key: str):
         """
         Send a reaction to a message in a Matrix room.
 
@@ -323,8 +323,8 @@ class Api:
         room_id : str
             The room id of the destination of the message.
 
-        event :
-            The event object you want to react to.
+        event_id : str
+            The event id of the object you want to react to.
 
         key: str
             The content of the reaction. This is usually an emoji, but may technically be any text.
@@ -334,7 +334,7 @@ class Api:
             room_id=room_id,
             content={
                 "m.relates_to": {
-                    "event_id": event.event_id,
+                    "event_id": event_id,
                     "key": key,
                     "rel_type": "m.annotation"
                 }
