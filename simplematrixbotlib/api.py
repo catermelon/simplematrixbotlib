@@ -314,7 +314,7 @@ class Api:
 
         await self._send_room(room_id=room_id, content=content)
 
-    async def send_reaction(self, room_id: str, event_id: str, key: str):
+    async def send_reaction(self, room_id: str, event: str | nio.events.room_events.Event, key: str):
         """
         Send a reaction to a message in a Matrix room.
 
@@ -329,6 +329,11 @@ class Api:
         key: str
             The content of the reaction. This is usually an emoji, but may technically be any text.
         """
+
+        if isinstance(event, nio.events.room_events.Event):
+            event_id = event.event_id
+        else:
+            event_id = event
 
         await self._send_room(
             room_id=room_id,
