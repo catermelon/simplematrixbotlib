@@ -323,8 +323,8 @@ class Api:
         room_id : str
             The room id of the destination of the message.
 
-        event_id : str
-            The event id of the object you want to react to.
+        event : str | nio.events.room_events.Event
+            The event object or its event id you want to react to.
 
         key: str
             The content of the reaction. This is usually an emoji, but may technically be any text.
