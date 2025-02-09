@@ -20,7 +20,7 @@ import sphinx_rtd_theme
 project = 'Simple-Matrix-Bot-Lib'
 
 # The full version, including alpha/beta/rc tags
-release = '2.12.2'
+release = '2.12.3'
 
 # -- General configuration ---------------------------------------------------
 

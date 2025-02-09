@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.12.3
+### 2025-02-09
+* Accept both event_id (str) and event (nio.events.room_events.Event) for event argument of send_reaction
+
 ## v2.12.2
 ### 2025-01-20
 * Use header auth for Auth Token check per MSC4126
