@@ -2,7 +2,7 @@ import nio.events.room_events
 import nio.events.to_device
 from nio import InviteMemberEvent
 from nio import MegolmEvent, KeyVerificationStart, KeyVerificationCancel, KeyVerificationKey, KeyVerificationMac, ToDeviceError, KeyVerificationEvent
-
+from simplematrixbotlib.match import Match
 
 class Callbacks:
     """
@@ -55,6 +55,12 @@ class Callbacks:
         """
         if not event.membership == "invite":
             return
+
+        if not self.bot.config._join_on_invite_by_anyone:
+            match = Match(room, event, self.bot)
+            if not match.is_from_allowed_user():
+                print("Invite by " + event.sender + " not accepted. User not on allowlist.")
+                return
 
         try:
             await self.async_client.join(room.room_id)

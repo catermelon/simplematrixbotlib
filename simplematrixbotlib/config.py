@@ -51,7 +51,7 @@ class Config:
 
     send_decryption_error_message_in_room = True
     _timeout: int = 65536
-    _join_on_invite: bool = True
+    _join_on_invite_by_anyone: bool = True
     _encryption_enabled: bool = ENCRYPTION_ENABLED
     _emoji_verify: bool = False  # So users who enable it are aware of required interactivity
     _ignore_unverified_devices: bool = True  # True by default in Element
