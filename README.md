@@ -10,7 +10,7 @@ Learn how you can contribute [here](CONTRIBUTING.md).
 
 ## Features
 
-- [x] hands-off approach: get started with just 10 lines of code (see [example](#Example-Usage))
+- [x] hands-off approach: get started with just 10 lines of code (see [example](#example-usage))
 - [x] [end-to-end encryption support](https://simple-matrix-bot-lib.readthedocs.io/en/latest/manual.html#e2e-encryption)
 - [x] limited [verification support](https://simple-matrix-bot-lib.readthedocs.io/en/latest/manual.html#verification) (device only)
 - [x] easily [extensible config file](https://simple-matrix-bot-lib.readthedocs.io/en/latest/manual.html#extending-the-config-class-with-custom-settings)
