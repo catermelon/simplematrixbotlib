@@ -1,43 +1,43 @@
-[tool.poetry]
+[project]
 name = "simplematrixbotlib"
 version = "2.12.3"
 description = "An easy to use bot library for the Matrix ecosystem written in Python."
-authors = ["imbev <imbev@protonmail.com>"]
+authors = [
+  {name = "imbev", email = "imbev@protonmail.com"},
+]
+requires-python = ">=3.9"
 license = "MIT"
 readme = "README.md"
-repository = "https://codeberg.org/imbev/simplematrixbotlib"
-documentation = "https://simple-matrix-bot-lib.readthedocs.io/en/latest/"
-keywords = ["simple", "matrix", "bot", "lib", "simple-matrix-bot-lib"]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
-    "Topic :: Communications :: Chat",
-    "Topic :: Internet",
+dependencies = [
+  "matrix-nio>=0.24",
+  "python-cryptography-fernet-wrapper>=1.0.4",
+  "pillow>=10.0.1",
+  "markdown>=3.3",
+  "toml>=0.10.2",
+  "cryptography>=46.0.3",
 ]
 
-[tool.poetry.urls]
-"Matrix Room" = "https://matrix.to/#/#simplematrixbotlib:matrix.org"
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "bandit>=1.8.6",
+    "mypy>=1.19.0",
+    "pre-commit>=4.3.0",
+    "pytest-github-actions-annotate-failures>=0.3.0",
+    "pytest-socket>=0.7.0",
+    "twine>=6.2.0",
+    "types-aiofiles>=25.1.0.20251011",
+    "types-markdown>=3.10.0.20251106",
+    "types-toml>=0.10.8.20240310",
+    "wheel>=0.45.1",
+    "yapf>=0.43.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-matrix-nio = ">=0.24"
-python-cryptography-fernet-wrapper = "^1.0.4"
-pillow = "^10.0.1"
-markdown = "^3.3"
-toml = "^0.10.2"
-
-[tool.poetry.group.dev.dependencies]
-wheel = "^0.38.4"
-twine = "^3.4.2"
-pytest = "^6.2.5"
-bandit = "^1.7.1"
-mypy = "^0.930"
-types-Markdown = "^3.3.9"
-types-aiofiles = "^0.7.0"
-types-toml = "^0.10.1"
-yapf = "^0.32.0"
-pytest-github-actions-annotate-failures = "^0.1.6"
+[tool.pytest]
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib", "--disable-socket", "--allow-unix-socket"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.9.6,<0.10.0"]
+build-backend = "uv_build"
+

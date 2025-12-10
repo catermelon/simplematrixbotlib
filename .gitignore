@@ -12,3 +12,5 @@ dist/
 session.txt
 echo.py
 /poetry.lock
+
+.venv
