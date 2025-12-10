@@ -4,19 +4,24 @@ import toml
 import re
 from typing import Set, Union
 from nio.crypto import ENCRYPTION_ENABLED
+from pathlib import Path
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
 def _config_dict_factory(tmp) -> dict:
     return {
         'simplematrixbotlib': {
-            'config':
-            {_strip_leading_underscore(name): _extract_pattern_if_neccessary(value)
-             for name, value in tmp}
+            'config': {
+                _strip_leading_underscore(name):
+                _extract_pattern_if_neccessary(value)
+                for name, value in tmp
+            }
         }
     }
+
 
 def _extract_pattern_if_neccessary(value):
     if type(value) is list or type(value) is set:
@@ -26,6 +31,7 @@ def _extract_pattern_if_neccessary(value):
         return value.pattern
     except AttributeError:
         return value
+
 
 def _strip_leading_underscore(tmp: str) -> str:
     return tmp[1:] if tmp[0] == '_' else tmp
@@ -60,13 +66,20 @@ class Config:
     _ignore_unverified_devices: bool = True  # True by default in Element
     # TODO: auto-ignore/auto-blacklist devices/users
     # _allowed_unverified_devices etc
-    _store_path: str = "./store/"
+    _store_path: Path = None
     _allowlist: Set[re.Pattern[str]] = field(
         default_factory=set)  # TODO: default to bot's homeserver
     _blocklist: Set[re.Pattern[str]] = field(default_factory=set)
     _decrypt_failure_msg = True
-    _set_presence="online"
+    _set_presence = "online"
     _first_sync_full: bool = False
+    config_dir: Path = None
+
+    def setup_config_dir(self):
+        if self.config_dir is None:
+            basedir = os.getenv('XDG_CONFIG_HOME',
+                                Path.home().joinpath('.config'))
+            self.config_dir = Path(basedir).joinpath('matrixbotlib')
 
     def _load_config_dict(self, config_dict: dict) -> None:
         # TODO: make this into a factory, so defaults for
@@ -151,7 +164,7 @@ class Config:
         self._emoji_verify = value and self.encryption_enabled
 
     @property
-    def store_path(self) -> str:
+    def store_path(self) -> Path:
         """
         Returns
         -------
@@ -161,10 +174,12 @@ class Config:
         return self._store_path
 
     @store_path.setter
-    def store_path(self, value: str) -> None:
+    def store_path(self, value: Path | str) -> None:
         # check if the path exists or can be created, throws an error otherwise
-        os.makedirs(value, mode=0o750, exist_ok=True)
-        self._store_path = value
+        if not self.config_dir:
+            self.setup_config_dir()
+
+        self._store_path = self.config_dir.joinpath(value)
 
     @property
     def ignore_unverified_devices(self) -> bool:

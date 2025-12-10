@@ -16,7 +16,9 @@ import uuid
 import simplematrixbotlib
 
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 async def check_valid_homeserver(homeserver: str) -> bool:
     if not (homeserver.startswith('http://')
@@ -62,7 +64,8 @@ class Api:
 
     """
 
-    def __init__(self, creds: simplematrixbotlib.Creds, config: simplematrixbotlib.Config):
+    def __init__(self, creds: simplematrixbotlib.Creds,
+                 config: simplematrixbotlib.Config):
         """
         Initializes the simplematrixbotlib.Api class.
 
@@ -98,12 +101,10 @@ class Api:
             max_timeouts=0,
             store_sync_tokens=True,
             encryption_enabled=self.config.encryption_enabled)
-        store_path = self.config.store_path
-        os.makedirs(store_path, mode=0o750, exist_ok=True)
         self.async_client = AsyncClient(homeserver=self.creds.homeserver,
                                         user=self.creds.username,
                                         device_id=self.creds.device_id,
-                                        store_path=store_path,
+                                        store_path=self.config.store_path,
                                         config=client_config)
 
         if self.creds.access_token:
@@ -111,9 +112,11 @@ class Api:
 
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f'{self.creds.homeserver}/_matrix/client/r0/account/whoami',
-                    headers={'Authorization': f'Bearer {self.creds.access_token}'}
-                ) as response:
+                        f'{self.creds.homeserver}/_matrix/client/r0/account/whoami',
+                        headers={
+                            'Authorization':
+                            f'Bearer {self.creds.access_token}'
+                        }) as response:
                     if isinstance(response, nio.responses.LoginError):
                         raise Exception(response)
 
@@ -150,16 +153,17 @@ class Api:
                             "Fix this by providing the correct credentials matching the stored session "
                             f"{self.creds._session_stored_file}.")
                     else:
-                        logger.debug(
-                            "First run with access token. "
-                            "Saving device ID (session ID)...")
-                        self.creds.device_id, self.async_client.device_id = (device_id, device_id)
+                        logger.debug("First run with access token. "
+                                     "Saving device ID (session ID)...")
+                        self.creds.device_id, self.async_client.device_id = (
+                            device_id, device_id)
                         self.creds.session_write_file()
                 else:
                     logger.warning(
                         "Loaded device ID (session ID) does not match the access token. "
                         "Recovering automatically...")
-                    self.creds.device_id, self.async_client.device_id = (device_id, device_id)
+                    self.creds.device_id, self.async_client.device_id = (
+                        device_id, device_id)
                     self.creds.session_write_file()
 
             if self.config.encryption_enabled:
@@ -220,7 +224,7 @@ class Api:
                 message_type=message_type,
                 content=content,
                 ignore_unverified_devices=ignore_unverified_devices
-                                          or self.config.ignore_unverified_devices)
+                or self.config.ignore_unverified_devices)
         except OlmUnverifiedDeviceError as e:
             logger.error(
                 "Message could not be sent. "
@@ -230,10 +234,10 @@ class Api:
             for user in self.async_client.rooms[room_id].users:
                 unverified: List[str] = list()
                 for device_id, device in self.async_client.olm.device_store[
-                    user].items():
+                        user].items():
                     if not (self.async_client.olm.is_device_verified(device) or
                             self.async_client.olm.is_device_blacklisted(device)
-                    ):
+                            ):
                         self.async_client.olm.blacklist_device(device)
                         unverified.append(device_id)
                 if len(unverified) > 0:
@@ -244,9 +248,13 @@ class Api:
                 message_type=message_type,
                 content=content,
                 ignore_unverified_devices=ignore_unverified_devices
-                                          or self.config.ignore_unverified_devices)
+                or self.config.ignore_unverified_devices)
 
-    async def send_text_message(self, room_id: str, message: str, msgtype: str = "m.text", reply_to: str = ""):
+    async def send_text_message(self,
+                                room_id: str,
+                                message: str,
+                                msgtype: str = "m.text",
+                                reply_to: str = ""):
         """
         Send a text message in a Matrix room.
 
@@ -266,21 +274,20 @@ class Api:
         """
 
         content = {
-            "msgtype" : msgtype,
-            "body" : message,
+            "msgtype": msgtype,
+            "body": message,
         }
 
         if reply_to != "":
-            content['m.relates_to'] = {
-                "m.in_reply_to" : {
-                    "event_id" : reply_to
-                }
-            }
-
+            content['m.relates_to'] = {"m.in_reply_to": {"event_id": reply_to}}
 
         await self._send_room(room_id=room_id, content=content)
 
-    async def send_markdown_message(self, room_id: str, message, msgtype: str = "m.text", reply_to: str = ""):
+    async def send_markdown_message(self,
+                                    room_id: str,
+                                    message,
+                                    msgtype: str = "m.text",
+                                    reply_to: str = ""):
         """
         Send a markdown message in a Matrix room.
 
@@ -299,23 +306,24 @@ class Api:
             The event id for replying message.
         """
         content = {
-                    "msgtype": msgtype,
-                    "body": message,
-                    "format": "org.matrix.custom.html",
-                    "formatted_body": markdown.markdown(message,
-                                                        extensions=['fenced_code', 'nl2br'])
-                }
+            "msgtype":
+            msgtype,
+            "body":
+            message,
+            "format":
+            "org.matrix.custom.html",
+            "formatted_body":
+            markdown.markdown(message, extensions=['fenced_code', 'nl2br'])
+        }
 
         if reply_to:
-            content['m.relates_to'] = {
-                "m.in_reply_to" : {
-                    "event_id" : reply_to
-                }
-            }
+            content['m.relates_to'] = {"m.in_reply_to": {"event_id": reply_to}}
 
         await self._send_room(room_id=room_id, content=content)
 
-    async def send_reaction(self, room_id: str, event: str | nio.events.room_events.Event, key: str):
+    async def send_reaction(self, room_id: str,
+                            event: str | nio.events.room_events.Event,
+                            key: str):
         """
         Send a reaction to a message in a Matrix room.
 
@@ -336,17 +344,15 @@ class Api:
         else:
             event_id = event
 
-        await self._send_room(
-            room_id=room_id,
-            content={
-                "m.relates_to": {
-                    "event_id": event_id,
-                    "key": key,
-                    "rel_type": "m.annotation"
-                }
-            },
-            message_type="m.reaction"
-        )
+        await self._send_room(room_id=room_id,
+                              content={
+                                  "m.relates_to": {
+                                      "event_id": event_id,
+                                      "key": key,
+                                      "rel_type": "m.annotation"
+                                  }
+                              },
+                              message_type="m.reaction")
 
     async def send_image_message(self, room_id: str, image_filepath: str):
         """
@@ -373,8 +379,7 @@ class Api:
                 content_type=mime_type,
                 filename=os.path.basename(image_filepath),
                 filesize=file_stat.st_size,
-                encrypt=self.config.encryption_enabled
-            )
+                encrypt=self.config.encryption_enabled)
         if isinstance(resp, UploadResponse):
             pass  # Successful upload
         else:
@@ -472,7 +477,12 @@ class Api:
 
         await self.async_client.room_forget(room_id)
 
-    async def start_poll(self, room_id: str, question: str, answers: list, disclosed: bool = True, max_selections: int = 1):
+    async def start_poll(self,
+                         room_id: str,
+                         question: str,
+                         answers: list,
+                         disclosed: bool = True,
+                         max_selections: int = 1):
         """
         Start a poll in a Matrix room.
 
@@ -507,15 +517,19 @@ class Api:
         }
 
         if not disclosed:
-            content['org.matrix.msc3381.poll.start']['kind'] = "org.matrix.msc3381.poll.undisclosed"
+            content['org.matrix.msc3381.poll.start'][
+                'kind'] = "org.matrix.msc3381.poll.undisclosed"
 
         for answer in answers:
             content['org.matrix.msc3381.poll.start']['answers'].append({
-                "id": str(uuid.uuid4()),
-                "org.matrix.msc1767.text": answer
+                "id":
+                str(uuid.uuid4()),
+                "org.matrix.msc1767.text":
+                answer
             })
 
-        await self._send_room(room_id, content, "org.matrix.msc3381.poll.start")
+        await self._send_room(room_id, content,
+                              "org.matrix.msc3381.poll.start")
 
     async def end_poll(self, room_id: str, event):
         """
@@ -530,14 +544,15 @@ class Api:
             The event object of the poll you want to end.
         """
 
-        await self._send_room(room_id, {
-            "body": "",
-            "m.relates_to": {
-                "rel_type": "m.reference",
-                "event_id": event.event_id
-            },
-            "org.matrix.msc1767.text": "Ended poll"
-        }, "org.matrix.msc3381.poll.end")
+        await self._send_room(
+            room_id, {
+                "body": "",
+                "m.relates_to": {
+                    "rel_type": "m.reference",
+                    "event_id": event.event_id
+                },
+                "org.matrix.msc1767.text": "Ended poll"
+            }, "org.matrix.msc3381.poll.end")
 
     async def ban(self, room_id: str, user_id: str, reason: str = None):
         """
@@ -613,7 +628,11 @@ class Api:
 
         await self.async_client.room_redact(room_id, event_id, reason)
 
-    async def edit(self, room_id: str, message: str, event_id: str, msgtype: str = "m.text"):
+    async def edit(self,
+                   room_id: str,
+                   message: str,
+                   event_id: str,
+                   msgtype: str = "m.text"):
         """
         Edit an event in a Matrix room.
 
@@ -630,20 +649,25 @@ class Api:
             The type of new message to send: m.text (default), m.notice, etc
         """
 
-        await self._send_room(room_id, {
-            "msgtype": "m.text",
-            "body": "* "+message,
-            "m.relates_to": {
-                "rel_type": "m.replace",
-                "event_id": event_id
-            },
-            "m.new_content": {
-                "msgtype": msgtype,
-                "body": message
-            }
-        })
+        await self._send_room(
+            room_id, {
+                "msgtype": "m.text",
+                "body": "* " + message,
+                "m.relates_to": {
+                    "rel_type": "m.replace",
+                    "event_id": event_id
+                },
+                "m.new_content": {
+                    "msgtype": msgtype,
+                    "body": message
+                }
+            })
 
-    async def send_location_message(self, room_id: str, uri: str, description: str = "", message: str = ""):
+    async def send_location_message(self,
+                                    room_id: str,
+                                    uri: str,
+                                    description: str = "",
+                                    message: str = ""):
         """
         Send a location message in a Matrix room.
 

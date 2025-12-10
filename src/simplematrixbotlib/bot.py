@@ -7,13 +7,11 @@ import cryptography
 import os
 
 import logging
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 from simplematrixbotlib.auth import Creds
 from simplematrixbotlib.config import Config
-
-
 
 
 class Bot:
@@ -52,6 +50,9 @@ class Bot:
         self.async_client: AsyncClient = None
         self.callbacks: botlib.Callbacks = None
 
+    async def setup(self):
+        ...  # XDG_CONFIG_HOME
+
     async def main(self) -> None:
         try:
             self.creds.session_read_file()
@@ -69,8 +70,10 @@ class Bot:
 
         self.async_client = self.api.async_client
 
-        resp = await self.async_client.sync(timeout=self.config.timeout, full_state=self.config.first_sync_full
-                                            )  #Ignore prior messages if full_state=False (default)
+        resp = await self.async_client.sync(
+            timeout=self.config.timeout,
+            full_state=self.config.first_sync_full
+        )  #Ignore prior messages if full_state=False (default)
 
         if isinstance(resp, SyncResponse):
             logger.info(
@@ -96,7 +99,10 @@ class Bot:
             for room_id in self.async_client.rooms:
                 await action(room_id)
 
-        await self.async_client.sync_forever(timeout=3000, full_state=True, set_presence=self.config._set_presence)
+        await self.async_client.sync_forever(
+            timeout=3000,
+            full_state=True,
+            set_presence=self.config._set_presence)
 
     def run(self) -> None:
         """
