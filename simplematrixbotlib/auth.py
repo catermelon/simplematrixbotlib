@@ -1,5 +1,8 @@
 from fernet_wrapper import Wrapper as fw
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class Creds:
     """
@@ -116,7 +119,7 @@ class Creds:
         """
 
         if not self._session_stored_file:
-            print('device_id and access_token will not be saved')
+            logger.warning('device_id and access_token will not be saved')
             return
 
         if not (self.device_id and self.access_token):

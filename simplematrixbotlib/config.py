@@ -5,6 +5,9 @@ import re
 from typing import Set, Union
 from nio.crypto import ENCRYPTION_ENABLED
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def _config_dict_factory(tmp) -> dict:
     return {
@@ -34,7 +37,7 @@ def _check_set_regex(value: Set[str]) -> Union[Set[re.Pattern[str]], None]:
         try:
             tmp = re.compile(v)
         except re.error:
-            print(
+            logger.error(
                 f"{v} is not a valid regular expression. Ignoring your list update."
             )
             return None

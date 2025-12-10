@@ -15,6 +15,8 @@ import re
 import uuid
 import simplematrixbotlib
 
+import logging
+logger = logging.getLogger(__name__)
 
 async def check_valid_homeserver(homeserver: str) -> bool:
     if not (homeserver.startswith('http://')
@@ -148,13 +150,13 @@ class Api:
                             "Fix this by providing the correct credentials matching the stored session "
                             f"{self.creds._session_stored_file}.")
                     else:
-                        print(
+                        logger.debug(
                             "First run with access token. "
                             "Saving device ID (session ID)...")
                         self.creds.device_id, self.async_client.device_id = (device_id, device_id)
                         self.creds.session_write_file()
                 else:
-                    print(
+                    logger.warning(
                         "Loaded device ID (session ID) does not match the access token. "
                         "Recovering automatically...")
                     self.creds.device_id, self.async_client.device_id = (device_id, device_id)
@@ -220,12 +222,11 @@ class Api:
                 ignore_unverified_devices=ignore_unverified_devices
                                           or self.config.ignore_unverified_devices)
         except OlmUnverifiedDeviceError as e:
-            # print(str(e))
-            print(
+            logger.error(
                 "Message could not be sent. "
                 "Set ignore_unverified_devices = True to allow sending to unverified devices."
             )
-            print("Automatically blacklisting the following devices:")
+            logger.info("Automatically blacklisting the following devices:")
             for user in self.async_client.rooms[room_id].users:
                 unverified: List[str] = list()
                 for device_id, device in self.async_client.olm.device_store[
@@ -236,7 +237,7 @@ class Api:
                         self.async_client.olm.blacklist_device(device)
                         unverified.append(device_id)
                 if len(unverified) > 0:
-                    print(f"\tUser {user}: {', '.join(unverified)}")
+                    logger.info(f"\tUser {user}: {', '.join(unverified)}")
 
             await self.async_client.room_send(
                 room_id=room_id,
@@ -377,7 +378,7 @@ class Api:
         if isinstance(resp, UploadResponse):
             pass  # Successful upload
         else:
-            print(f"Failed Upload Response: {resp}")
+            logger.debug(f"Failed Upload Response: {resp}")
 
         content = {
             "body": os.path.basename(image_filepath),
@@ -405,7 +406,7 @@ class Api:
         try:
             await self._send_room(room_id=room_id, content=content)
         except:
-            print(f"Failed to send image file {image_filepath}")
+            logger.error(f"Failed to send image file {image_filepath}")
 
     async def send_video_message(self, room_id: str, video_filepath: str):
         """
@@ -433,7 +434,7 @@ class Api:
         if isinstance(resp, UploadResponse):
             pass  # Successful upload
         else:
-            print(f"Failed Upload Response: {resp}")
+            logger.error(f"Failed Upload Response: {resp}")
 
         content = {
             "body": os.path.basename(video_filepath),
@@ -449,7 +450,7 @@ class Api:
         try:
             await self._send_room(room_id=room_id, content=content)
         except:
-            print(f"Failed to send video file {video_filepath}")
+            logger.error(f"Failed to send video file {video_filepath}")
 
     async def leave_room(self, room_id: str):
         """

@@ -6,8 +6,14 @@ from nio import SyncResponse, AsyncClient
 import cryptography
 import os
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 from simplematrixbotlib.auth import Creds
 from simplematrixbotlib.config import Config
+
+
 
 
 class Bot:
@@ -50,8 +56,8 @@ class Bot:
         try:
             self.creds.session_read_file()
         except cryptography.fernet.InvalidToken:
-            print("Invalid Stored Token")
-            print("Regenerating token from provided credentials")
+            logger.info("Invalid Stored Token")
+            logger.info("Regenerating token from provided credentials")
             os.remove(self.creds._session_stored_file)
             self.creds.session_read_file()
 
@@ -67,12 +73,12 @@ class Bot:
                                             )  #Ignore prior messages if full_state=False (default)
 
         if isinstance(resp, SyncResponse):
-            print(
+            logger.info(
                 f"Connected to {self.async_client.homeserver} as {self.async_client.user_id} ({self.async_client.device_id})"
             )
             if self.config.encryption_enabled:
                 key = self.async_client.olm.account.identity_keys['ed25519']
-                print(
+                logger.info(
                     f"This bot's public fingerprint (\"Session key\") for one-sided verification is: "
                     f"{' '.join([key[i:i+4] for i in range(0, len(key), 4)])}")
 
