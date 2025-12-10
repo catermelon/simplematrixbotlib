@@ -1,0 +1,11 @@
+[simplematrixbotlib.config]
+timeout = 65536
+join_on_invite = true
+encryption_enabled = false
+emoji_verify = false
+ignore_unverified_devices = true
+store_path = "./store/"
+allowlist = []
+blocklist = []
+first_sync_full = false
+simple_setting = "Default"

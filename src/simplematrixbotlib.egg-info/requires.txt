@@ -1,0 +1,6 @@
+matrix-nio>=0.24
+python-cryptography-fernet-wrapper>=1.0.4
+pillow>=10.0.1
+markdown>=3.3
+toml>=0.10.2
+cryptography>=46.0.3
