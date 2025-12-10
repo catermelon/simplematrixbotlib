@@ -1,4 +1,9 @@
-# Simple-Matrix-Bot-Lib
+# simple matrix bot lib
+
+This is a fork of the original repo to tinker around and fix a few things. 
+
+# Original readme - Simple-Matrix-Bot-Lib
+
 (Version 2.12.3)
 
 Simple-Matrix-Bot-Lib is a Python bot library for the Matrix ecosystem built on [matrix-nio](https://github.com/poljar/matrix-nio).
