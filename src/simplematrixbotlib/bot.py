@@ -1,5 +1,4 @@
 import asyncio
-import sys
 from typing import Optional
 import simplematrixbotlib as botlib
 from nio import SyncResponse, AsyncClient
@@ -83,7 +82,9 @@ class Bot:
                 key = self.async_client.olm.account.identity_keys['ed25519']
                 logger.info(
                     f"This bot's public fingerprint (\"Session key\") for one-sided verification is: "
-                    f"{' '.join([key[i:i+4] for i in range(0, len(key), 4)])}")
+                    f"{key}"
+                    f"To verify the bot, run `/verify {self.async_client.device_id} {key}` in Element"
+                )
 
         self.creds.session_write_file()
 

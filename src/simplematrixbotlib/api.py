@@ -1,18 +1,11 @@
-from __future__ import annotations
 import json
 from nio import (AsyncClient, AsyncClientConfig)
 from nio.exceptions import OlmUnverifiedDeviceError
-from nio.responses import UploadResponse
 import nio
-from PIL import Image
-import aiofiles.os
-import mimetypes
-import os
 import markdown
 import aiohttp
 from typing import List, Tuple, Union
 import re
-import uuid
 import simplematrixbotlib
 
 import logging
@@ -354,109 +347,6 @@ class Api:
                               },
                               message_type="m.reaction")
 
-    async def send_image_message(self, room_id: str, image_filepath: str):
-        """
-        Send an image message in a Matrix room.
-
-        Parameters
-        -----------
-        room_id : str
-            The room id of the destination of the message.
-
-        image_filepath : str
-            The path to the image on your machine.
-        """
-
-        mime_type = mimetypes.guess_type(image_filepath)[0]
-
-        image = Image.open(image_filepath)
-        (width, height) = image.size
-
-        file_stat = await aiofiles.os.stat(image_filepath)
-        async with aiofiles.open(image_filepath, "r+b") as file:
-            resp, decryption_keys = await self.async_client.upload(
-                file,
-                content_type=mime_type,
-                filename=os.path.basename(image_filepath),
-                filesize=file_stat.st_size,
-                encrypt=self.config.encryption_enabled)
-        if isinstance(resp, UploadResponse):
-            pass  # Successful upload
-        else:
-            logger.debug(f"Failed Upload Response: {resp}")
-
-        content = {
-            "body": os.path.basename(image_filepath),
-            "info": {
-                "size": file_stat.st_size,
-                "mimetype": mime_type,
-                "thumbnail_info": None,
-                "w": width,
-                "h": height,
-                "thumbnail_url": None
-            },
-            "msgtype": "m.image",
-            "url": resp.content_uri
-        }
-
-        if self.config.encryption_enabled:
-            content["file"] = {
-                "url": resp.content_uri,
-                "key": decryption_keys["key"],
-                "iv": decryption_keys["iv"],
-                "hashes": decryption_keys["hashes"],
-                "v": decryption_keys["v"],
-            }
-
-        try:
-            await self._send_room(room_id=room_id, content=content)
-        except:
-            logger.error(f"Failed to send image file {image_filepath}")
-
-    async def send_video_message(self, room_id: str, video_filepath: str):
-        """
-        Send a video message in a Matrix room.
-
-        Parameters
-        ----------
-        room_id : str
-            The room id of the destination of the message.
-
-        video_filepath : str
-            The path to the video on your machine.
-        """
-
-        mime_type = mimetypes.guess_type(video_filepath)[0]
-
-        file_stat = await aiofiles.os.stat(video_filepath)
-        async with aiofiles.open(video_filepath, "r+b") as file:
-            resp, maybe_keys = await self.async_client.upload(
-                file,
-                content_type=mime_type,
-                filename=os.path.basename(video_filepath),
-                filesize=file_stat.st_size)
-
-        if isinstance(resp, UploadResponse):
-            pass  # Successful upload
-        else:
-            logger.error(f"Failed Upload Response: {resp}")
-
-        content = {
-            "body": os.path.basename(video_filepath),
-            "info": {
-                "size": file_stat.st_size,
-                "mimetype": mime_type,
-                "thumbnail_info": None
-            },
-            "msgtype": "m.video",
-            "url": resp.content_uri
-        }
-
-        try:
-            await self._send_room(room_id=room_id, content=content)
-        except:
-            logger.error(f"Failed to send video file {video_filepath}")
-
     async def leave_room(self, room_id: str):
         """
         Leave a Matrix room.
@@ -476,83 +366,6 @@ class Api:
         """
 
         await self.async_client.room_forget(room_id)
-
-    async def start_poll(self,
-                         room_id: str,
-                         question: str,
-                         answers: list,
-                         disclosed: bool = True,
-                         max_selections: int = 1):
-        """
-        Start a poll in a Matrix room.
-
-        Parameters
-        ----------
-        room_id : str
-            The room id of the destination of the poll.
-
-        question : str
-            The content of the question to be sent.
-
-        answers : list
-            The answers of the poll to be sent.
-
-        disclosed : bool, optional
-            Whether the poll is disclosed, default True
-
-        max_selections : int, optional
-            The maximum number of answers to be selected, default 1
-        """
-
-        content = {
-            "body": "",
-            "org.matrix.msc3381.poll.start": {
-                "question": {
-                    "org.matrix.msc1767.text": question
-                },
-                "kind": "org.matrix.msc3381.poll.disclosed",
-                "max_selections": max_selections,
-                "answers": []
-            }
-        }
-
-        if not disclosed:
-            content['org.matrix.msc3381.poll.start'][
-                'kind'] = "org.matrix.msc3381.poll.undisclosed"
-
-        for answer in answers:
-            content['org.matrix.msc3381.poll.start']['answers'].append({
-                "id":
-                str(uuid.uuid4()),
-                "org.matrix.msc1767.text":
-                answer
-            })
-
-        await self._send_room(room_id, content,
-                              "org.matrix.msc3381.poll.start")
-
-    async def end_poll(self, room_id: str, event):
-        """
-        End a poll in a Matrix room.
-
-        Parameters
-        ----------
-        room_id : str
-            The room id of the destination of the poll.
-
-        event :
-            The event object of the poll you want to end.
-        """
-
-        await self._send_room(
-            room_id, {
-                "body": "",
-                "m.relates_to": {
-                    "rel_type": "m.reference",
-                    "event_id": event.event_id
-                },
-                "org.matrix.msc1767.text": "Ended poll"
-            }, "org.matrix.msc3381.poll.end")
 
     async def ban(self, room_id: str, user_id: str, reason: str = None):
         """
@@ -662,46 +475,3 @@ class Api:
                     "body": message
                 }
             })
-
-    async def send_location_message(self,
-                                    room_id: str,
-                                    uri: str,
-                                    description: str = "",
-                                    message: str = ""):
-        """
-        Send a location message in a Matrix room.
-
-        Parameters
-        ----------
-        room_id : str
-            The room id of the destination of the message.
-
-        uri : str
-            The geo URI scheme of the location.
-
-        description : str, optional
-            The description of the location, default uri
-
-        message : str, optional
-            The body of the message to be sent, default uri
-        """
-
-        content = {
-            "msgtype": "m.location",
-            "body": uri,
-            "geo_uri": uri,
-            "org.matrix.msc3488.location": {
-                "uri": uri,
-                "description": uri
-            },
-            "org.matrix.msc1767.text": uri,
-        }
-
-        if description:
-            content['org.matrix.msc3488.location']['description'] = description
-
-        if message:
-            content['body'] = message
-            content['org.matrix.msc1767.text'] = message
-
-        await self._send_room(room_id, content)

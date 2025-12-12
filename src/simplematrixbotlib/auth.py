@@ -1,6 +1,7 @@
-from fernet_wrapper import Wrapper as fw
+from .crypto import Wrapper as fw
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

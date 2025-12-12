@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field, fields, asdict
-import os.path
+import os
 import toml
 import re
 from typing import Set, Union
@@ -64,8 +64,6 @@ class Config:
     _encryption_enabled: bool = ENCRYPTION_ENABLED
     _emoji_verify: bool = False  # So users who enable it are aware of required interactivity
     _ignore_unverified_devices: bool = True  # True by default in Element
-    # TODO: auto-ignore/auto-blacklist devices/users
-    # _allowed_unverified_devices etc
     _store_path: Path = None
     _allowlist: Set[re.Pattern[str]] = field(
         default_factory=set)  # TODO: default to bot's homeserver
